@@ -30,7 +30,7 @@ def frequency_table(text, k):
 
 
 def max_map(dictionary):
-    # take dictionary, return key-value pair of highest value
+    # take dictionary, return highest value
     dictionary = sorted(dictionary.items(), key=lambda x: x[1], reverse=True)
     if len(dictionary) > 0:
         key, value = dictionary[0]
