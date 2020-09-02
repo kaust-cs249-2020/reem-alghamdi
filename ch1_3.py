@@ -5,6 +5,12 @@
 
 
 def reverse_compliment(pattern):
+    """
+    This function takes a genome of letters A, T, C, G and find its reverse compliment:
+    basically exchange A and T, C and G then reverse the result
+    :param pattern: the string
+    :return: the reverse compliment
+    """
     pattern = pattern.replace("A", "t")\
         .replace("G", "c")\
         .replace("C", "G")\
@@ -13,16 +19,14 @@ def reverse_compliment(pattern):
     print(pattern)
     return pattern
 
-"""
-Code Challenge: Solve the Pattern Matching Problem.
-
-    Input: Two strings, Pattern and Genome.
-    Output: A collection of space-separated integers specifying all starting positions where Pattern appears as a substring of Genome.
-
-"""
-
 
 def pattern_matching_positions(text, pattern):
+    """
+    This function takes a string and a pattern, then return an integer array of the indexes where the pattern starts
+    :param text: the string
+    :param pattern: the pattern to match
+    :return: an array of the start positions in which this pattern appeared
+    """
     positions = []
     for index in range(len(text) - len(pattern) + 1):
         substring = text[index: index + len(pattern)]

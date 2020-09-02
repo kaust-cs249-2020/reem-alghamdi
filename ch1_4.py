@@ -7,6 +7,16 @@ from collections import OrderedDict
 
 
 def find_clumps(text, k, l, t):
+    """
+    This function takes the text, the pattern length, the sliding window and the minimum freuqency,
+    then return k-mers appearing more than the threshold t
+
+    :param text: the full string
+    :param k: the length of the pattern to find
+    :param l: the length of the sliding window
+    :param t: the minimum frequency
+    :return: a string list of the k-mers appearing AT LEAST t times
+    """
     patterns = []
     n = len(text)
     for i in range(n - l):
