@@ -4,8 +4,8 @@
 """
 
 from ch1.code.ch1_11 import neighbors
-from ch1.code.ch1_2 import max_map
-from ch1.code.ch1_3 import reverse_compliment
+from ch1.code.ch1_02 import max_map
+from ch1.code.ch1_03 import reverse_compliment
 
 
 def hamming_distance(str1, str2):

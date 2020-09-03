@@ -31,7 +31,7 @@ def neighbors(pattern, d):
     :param d: the maximum hamming distance between the pattern and the neighbors
     :return: an array of patterns where the hamming distance between them and the pattern is at most d
     """
-    from ch1.code.ch1_8 import hamming_distance
+    from ch1.code.ch1_08 import hamming_distance
 
     nucleotides = ["A", "C", "T", "G"]
 

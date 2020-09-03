@@ -2,7 +2,7 @@
 @BY: Reem Alghamdi
 @DATE: 01-09-2020
 """
-from ch1.code.ch1_2 import frequency_table
+from ch1.code.ch1_02 import frequency_table
 from collections import OrderedDict
 
 
