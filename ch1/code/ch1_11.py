@@ -3,6 +3,7 @@
 @DATE: 03-09-2020
 """
 
+
 def immediate_neighbors(pattern):
     """
     This function takes a pattern, and return ALL patterns where the hamming distance is 1
