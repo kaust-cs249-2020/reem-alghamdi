@@ -1,2 +1,5 @@
 .idea
 __pycache__
+ch1/code/__pycache__
+ch2/code/__pycache__
+venv
