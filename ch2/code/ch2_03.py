@@ -62,23 +62,49 @@ def score(motifs):
     return score
 
 
-def profile(motifs):
+def profile_matrix(motifs):
     """
-    this function takes a matrix of t motifs then returns the profile 4 (A, C, G, T) x t
+    ["AAA",
+    "GTC",
+    "TAC"
+    "CGG"]
+    """
+    """
+    this function takes a matrix of t motifs of length k then returns the profile 4 (A, C, G, T) x k
     :param motifs: t x k motif matrix
-    :return: profile: a 4 x t of dictionaries of nucleotides where the value of their count in each column count / t
+    :return: profile: a 4 x k of dictionaries of nucleotides where the value of their count in each column count / t
     """
     profile = [[], [], [], []]
-    for motif in motifs:
+    for index in range(len(motifs[0])):
+
+        col = [n[index] for n in motifs]
         frequent_n = {"A": 0, "C": 0, "G": 0, "T": 0}
-        for nucleotide in motif:
+        for nucleotide in col:
             frequent_n[nucleotide] += 1
-        profile[0].append(frequent_n["A"] / len(motif))
-        profile[1].append(frequent_n["C"] / len(motif))
-        profile[2].append(frequent_n["G"] / len(motif))
-        profile[3].append(frequent_n["T"] / len(motif))
+        profile[0].append(frequent_n["A"] / len(col))
+        profile[1].append(frequent_n["C"] / len(col))
+        profile[2].append(frequent_n["G"] / len(col))
+        profile[3].append(frequent_n["T"] / len(col))
 
     return profile
+
+
+def score(motifs):
+    """
+    this function takes a t motifs
+    then returns the score
+    :param matrix: t x k motif matrix
+    :return: score: the sum of unpopular letters in all columns
+    """
+    score = 0
+    for index in range(len(motifs[0])):
+        col = [n[index] for n in motifs]
+        frequent_n = {"A": 0, "C": 0, "G": 0, "T": 0}
+        for nucleotide in col:
+            frequent_n[nucleotide] += 1
+        most_freq = max(frequent_n.items(), key=operator.itemgetter(1))[0]
+        score = score + (len(col) - frequent_n[most_freq])
+    return score
 
 
 if __name__ == "__main__":
