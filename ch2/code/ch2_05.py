@@ -11,7 +11,6 @@ map_nucleotides = {'A': 0, 'C': 1, 'G': 2, 'T': 3}
 
 def profile_most_probable_kmer(text, k, matrix_4xk):
     """
-    Th
     :param text: the text
     :param k: k-mer length
     :param matrix_4xk: the profile matrix (A, C, G, T) x (profile)
