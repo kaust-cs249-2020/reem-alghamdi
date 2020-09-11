@@ -26,6 +26,7 @@ def profile_most_probable_kmer(text, k, matrix_4xk):
     return max(probability_table.items(), key=operator.itemgetter(1))[0]
 
 
+
 def greedy_motif_search(dna, k, t):
     """
     :param dna: dna matrix of k motifs.

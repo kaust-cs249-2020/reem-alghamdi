@@ -45,23 +45,6 @@ def motifs(matrix):
     return consensus, score, count, profile, entropy, entropies
 
 
-def score(motifs):
-    """
-    this function takes a t motifs
-    then returns the score
-    :param matrix: t x k motif matrix
-    :return: score: the sum of unpopular letters in all columns
-    """
-    score = 0
-    for motif in motifs:
-        frequent_n = {"A": 0, "C": 0, "G": 0, "T": 0}
-        for nucleotide in motif:
-            frequent_n[nucleotide] += 1
-        most_freq = max(frequent_n.items(), key=operator.itemgetter(1))[0]
-        score = score + (len(motif) - frequent_n[most_freq])
-    return score
-
-
 def profile_matrix(motifs):
     """
     ["AAA",
