@@ -47,12 +47,6 @@ def motifs(matrix):
 
 def profile_matrix(motifs):
     """
-    ["AAA",
-    "GTC",
-    "TAC"
-    "CGG"]
-    """
-    """
     this function takes a matrix of t motifs of length k then returns the profile 4 (A, C, G, T) x k
     :param motifs: t x k motif matrix
     :return: profile: a 4 x k of dictionaries of nucleotides where the value of their count in each column count / t

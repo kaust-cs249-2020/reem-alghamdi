@@ -7,7 +7,7 @@ import operator
 from ch2.code.ch2_05 import profile_most_probable_kmer
 
 
-def profile_matrix(motifs):
+def profile_matrix_pseudocounts(motifs):
     """
     ["AAA",
     "GTC",
@@ -34,7 +34,7 @@ def profile_matrix(motifs):
     return profile
 
 
-def score(motifs):
+def score_pseudocounts(motifs):
     """
     this function takes a t motifs
     then returns the score
@@ -64,9 +64,9 @@ def greedy_motif_search_pseudocounts(dna, k, t):
         kmer = dna[0][index:index+k]
         motifs = [kmer]
         for i in range(1, t):
-            profile = profile_matrix(motifs)
+            profile = profile_matrix_pseudocounts(motifs)
             motifs.append(profile_most_probable_kmer(dna[i], k, profile))
-        if score(motifs) < score(best_motifs):
+        if score_pseudocounts(motifs) < score_pseudocounts(best_motifs):
             best_motifs = motifs
     return best_motifs
 
