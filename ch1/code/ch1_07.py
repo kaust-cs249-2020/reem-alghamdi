@@ -23,16 +23,6 @@ def skew(pattern):
     return skew_arr
 
 
-"""
-We have just developed an insight for a new algorithm for locating ori: it should be found where the skew attains a minimum.
-
-Minimum Skew Problem: Find a position in a genome where the skew diagram attains a minimum.
-
-    Input: A DNA string Genome.
-    Output: All integer(s) i minimizing Skewi (Genome) among all values of i (from 0 to |Genome|).
-"""
-
-
 def minimum_skew(genome):
     """
     this function return an array of positions where the lowest skew is
