@@ -3,6 +3,7 @@
 @DATE: 17-09-2020
 """
 
+
 def genome_path(sequence):
     """
     :param sequence: list of strings ordered by appearance
