@@ -95,7 +95,6 @@ if __name__ == "__main__":
 # GAT
 # AGA""".split()))
     with open("../data/dataset_369275_5.txt") as file:
-        # print(*generate_contigs_from_reads(file.read().splitlines()))
         print(*contig_generation(file.read().splitlines()))
     # with open("../data/ch3_14") as file:
     #     for path in branches(format_adjacency_list(file.read())):
