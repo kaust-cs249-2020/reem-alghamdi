@@ -25,21 +25,5 @@ def linear_spectrum(peptide):
     return sorted(linear_spectrums)
 
 
-def cyclic_spectrum(peptide):
-    """
-    :param peptide: amino acid string
-    :return: the cyclic spectrum of peptide
-    """
-    prefix_max = prefix_max_array(peptide)
-    peptide_mass = prefix_max[len(peptide)]
-    cyclic_spectrums = [0]
-    for i in range(len(peptide)):
-        for j in range(i + 1, len(peptide) + 1):
-            cyclic_spectrums.append(prefix_max[j] - prefix_max[i])
-            if i > 0 and j < len(peptide):
-                cyclic_spectrums.append(peptide_mass - (prefix_max[j] - prefix_max[i]))
-    return sorted(cyclic_spectrums)
-
-
 if __name__ == "__main__":
     print(*linear_spectrum("AMILPRLDCKVWWETKWPFETRSKCYIRGWRWGTCMGAHLDLIIY"))

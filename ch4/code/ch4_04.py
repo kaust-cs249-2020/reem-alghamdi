@@ -2,6 +2,7 @@
 @BY: Reem Alghamdi
 @DATE: 24-09-2020
 """
+from ch4.code.ch4_11 import prefix_max_array
 
 
 def num_subpeptides(n):
@@ -11,13 +12,23 @@ def num_subpeptides(n):
     """
     return n * (n-1)
 
-"""
-Generating Theoretical Spectrum Problem: Generate the theoretical spectrum of a cyclic peptide.
 
-    Input: An amino acid string Peptide.
-    Output: Cyclospectrum(Peptide).
+def cyclic_spectrum(peptide):
+    """
+    :param peptide: amino acid string
+    :return: the cyclic spectrum of peptide
+    """
+    prefix_max = prefix_max_array(peptide)
+    peptide_mass = prefix_max[len(peptide)]
+    cyclic_spectrums = [0]
+    for i in range(len(peptide)):
+        for j in range(i + 1, len(peptide) + 1):
+            cyclic_spectrums.append(prefix_max[j] - prefix_max[i])
+            if i > 0 and j < len(peptide):
+                cyclic_spectrums.append(peptide_mass - (prefix_max[j] - prefix_max[i]))
+    return sorted(cyclic_spectrums)
 
-Code Challenge: Solve the Generating Theoretical Spectrum Problem.
-"""
+
 if __name__ == "__main__":
     print(num_subpeptides(26369))
+    print(*cyclic_spectrum("WPIEMPQCVQWMLH"))
