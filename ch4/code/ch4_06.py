@@ -38,11 +38,8 @@ def cyclopeptide_sequencing(spectrum):
     final_peptides_masses = []
     while len(candidate_peptides) > 0:
         candidate_peptides = expand(candidate_peptides)
-        if len(cyclic_spectrum(candidate_peptides[0])) > len(spectrum):
-            break
-        for peptide in candidate_peptides:
+        for peptide in candidate_peptides[:]:
             if mass(peptide) == parent_mass and peptide not in final_peptides:
-                print(peptide, mass(peptide))
                 if cyclic_spectrum(peptide) == spectrum:
                     final_peptides.append(peptide)
                     num = []
@@ -58,7 +55,7 @@ def cyclopeptide_sequencing(spectrum):
 def expand(peptides):
     new_peptides = []
     for peptide in peptides:
-        for amino_acid in integer_mass_table_18:
+        for amino_acid in integer_mass_table_18.keys():
             new_peptides.append(peptide + amino_acid)
     return new_peptides
 
@@ -66,5 +63,5 @@ def expand(peptides):
 if __name__ == "__main__":
     print(num_subpeptides_linear(16238))
     print(*cyclopeptide_sequencing([int(x) for x in "0 113 128 186 241 299 314 427".split()]))
-    # print(*cyclopeptide_sequencing([int(x) for x in "0 97 113 113 114 128 137 156 156 186 211 227 250 253 265 269 269 314 324 342 366 367 378 383 406 451 455 470 480 480 480 503 534 564 569 583 593 607 617 631 636 666 697 720 720 720 730 745 749 794 817 822 833 834 858 876 886 931 931 935 947 950 973 989 1014 1044 1044 1063 1072 1086 1087 1087 1103 1200".split()]))
+    print(*cyclopeptide_sequencing([int(x) for x in "0 71 99 103 113 113 115 137 137 147 147 170 186 202 216 250 252 260 260 273 284 284 285 315 323 363 386 388 397 397 397 397 399 422 462 470 500 501 510 512 525 533 534 544 569 583 599 613 638 648 649 657 670 672 681 682 712 720 760 783 785 785 785 785 794 796 819 859 867 897 898 898 909 922 922 930 932 966 980 996 1012 1035 1035 1045 1045 1067 1069 1069 1079 1083 1111 1182".split()]))
 
