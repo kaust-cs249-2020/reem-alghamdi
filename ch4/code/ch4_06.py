@@ -20,6 +20,16 @@ def num_subpeptides_linear(n):
     return int(n * (n+1) / 2 + 1)
 
 
+def peptide_to_masses(peptide):
+    """
+    given a peptide string, return equivalent masses separated by -
+    """
+    num = []
+    for amino in peptide:
+        num.append(str(integer_mass_table[amino]))
+    return '-'.join(num)
+
+
 def mass(peptide):
     m = 0
     for amino_acid in peptide:
@@ -42,10 +52,7 @@ def cyclopeptide_sequencing(spectrum):
             if mass(peptide) == parent_mass and peptide not in final_peptides:
                 if cyclic_spectrum(peptide) == spectrum:
                     final_peptides.append(peptide)
-                    num = []
-                    for amino in peptide:
-                        num.append(str(integer_mass_table[amino]))
-                    final_peptides_masses.append('-'.join(num))
+                    final_peptides_masses.append(peptide_to_masses(peptide))
                 candidate_peptides.remove(peptide)
             elif not all(a in spectrum for a in linear_spectrum(peptide)):
                 candidate_peptides.remove(peptide)
