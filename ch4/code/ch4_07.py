@@ -4,7 +4,7 @@
 """
 from ch4.code.ch4_04 import cyclic_spectrum
 from ch4.code.ch4_06 import mass, peptide_to_masses, expand
-from ch4.code.ch4_11 import linear_spectrum
+from ch4.code.ch4_13 import linear_score, trim
 
 
 def score(peptide, spectrum):
@@ -19,38 +19,6 @@ def score(peptide, spectrum):
             count += 1
             s.remove(x)
     return count
-
-
-def linear_score(peptide, spectrum):
-    """
-    given a peptide and a spectrum,
-    return the count of the number of matches between linear spectrum of peptide and spectrum
-    """
-    s = spectrum.copy()
-    count = 0
-    for x in linear_spectrum(peptide):
-        if x in s:
-            count += 1
-            s.remove(x)
-    return count
-
-
-def trim(leaderboard, spectrum, n):
-    """
-    :param leaderboard: list of peptides
-    :param spectrum: the spectrum wanted
-    :param n: the array length (ties included)
-    :return: collection of the top N highest-scoring linear peptides in Leaderboard (including ties) with respect to Spectrum.
-    """
-    peptides = {}
-    for peptide in leaderboard:
-        peptides[peptide] = linear_score(peptide, spectrum)
-    peptides_list = sorted(peptides.items(), key=lambda item: item[1], reverse=True)
-    cut = [t[0] for i, t in enumerate(peptides_list) if i < n]
-    for t in peptides_list[n:]:
-        if t[1] == peptides[cut[-1]]:
-            cut.append(t[0])
-    return cut
 
 
 def leaderboard_cyclopeptide_sequencing(spectrum, n):
