@@ -59,11 +59,12 @@ def cyclopeptide_sequencing(spectrum):
     return final_peptides_masses
 
 
-def expand(peptides):
+def expand(peptides, amino_list=None):
     new_peptides = []
     for peptide in peptides:
-        for amino_acid in integer_mass_table_18.keys():
-            new_peptides.append(peptide + amino_acid)
+        for amino_acid, mass in integer_mass_table_18.items():
+            if (amino_list and mass in amino_list) or not amino_list:
+                new_peptides.append(peptide + amino_acid)
     return new_peptides
 
 

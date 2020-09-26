@@ -3,7 +3,7 @@
 @DATE: 25-09-2020
 """
 from ch4.code.ch4_04 import cyclic_spectrum
-from ch4.code.ch4_06 import mass, peptide_to_masses, expand
+from ch4.code.ch4_06 import mass, peptide_to_masses, expand, integer_mass_table_18
 from ch4.code.ch4_13 import linear_score, trim
 
 
@@ -21,7 +21,7 @@ def score(peptide, spectrum):
     return count
 
 
-def leaderboard_cyclopeptide_sequencing(spectrum, n):
+def leaderboard_cyclopeptide_sequencing(spectrum, n, amino_list=None):
     """
     :param spectrum: spectrum (list of int)
     :return: highest score amino acids
@@ -30,7 +30,7 @@ def leaderboard_cyclopeptide_sequencing(spectrum, n):
     leader_peptide = ""
     parent_mass = max(spectrum)
     while len(leaderboard) > 0:
-        leaderboard = expand(leaderboard)
+        leaderboard = expand(leaderboard, amino_list)
         for peptide in leaderboard[:]:
             mass_peptide = mass(peptide)
             if mass_peptide == parent_mass:
@@ -39,12 +39,10 @@ def leaderboard_cyclopeptide_sequencing(spectrum, n):
             elif mass_peptide > parent_mass:
                 leaderboard.remove(peptide)
         leaderboard = trim(leaderboard, spectrum, n)
-
-    print(leader_peptide)
     return peptide_to_masses(leader_peptide)
 
 
-def leaderboard_cyclopeptide_sequencing_list(spectrum, n):
+def leaderboard_cyclopeptide_sequencing_list(spectrum, n, amino_list=None):
     """
     :param spectrum: spectrum (list of int)
     :return: list of amino acids with highest score
@@ -54,21 +52,18 @@ def leaderboard_cyclopeptide_sequencing_list(spectrum, n):
     leader_peptides = []
     parent_mass = max(spectrum)
     while len(leaderboard) > 0:
-        leaderboard = expand(leaderboard)
+        leaderboard = expand(leaderboard, amino_list)
         for peptide in leaderboard[:]:
             mass_peptide = mass(peptide)
             if mass_peptide == parent_mass:
                 if linear_score(peptide, spectrum) > linear_score(leader_peptide, spectrum):
                     leader_peptide = peptide
-                    leader_peptides = [peptide_to_masses(leader_peptide)]
-                    print(linear_score(leader_peptide, spectrum))
+                    leader_peptides = [{peptide: (peptide_to_masses(peptide), mass(peptide))}]
                 elif linear_score(peptide, spectrum) == linear_score(leader_peptide, spectrum):
-                    leader_peptides.append(peptide_to_masses(peptide))
-
+                    leader_peptides.append({peptide: (peptide_to_masses(peptide), mass(peptide))})
             elif mass_peptide > parent_mass:
                 leaderboard.remove(peptide)
         leaderboard = trim(leaderboard, spectrum, n)
-
     return leader_peptides
 
 
@@ -81,4 +76,4 @@ if __name__ == "__main__":
     # sp = "0 87 87 97 99 101 113 113 114 115 115 115 128 128 128 128 131 131 131 137 137 147 156 163 201 218 226 227 228 230 230 232 234 238 241 242 243 244 250 252 259 259 262 262 265 275 284 319 329 332 341 345 349 349 354 356 357 365 366 367 369 371 372 377 378 390 390 390 406 428 431 433 456 460 464 477 479 480 482 485 485 487 491 492 493 497 503 504 505 505 518 534 546 559 561 570 579 584 591 591 592 595 600 608 610 613 616 620 622 624 629 633 633 633 660 661 678 681 697 698 698 710 713 722 723 723 723 726 737 739 744 747 748 750 757 761 776 780 796 797 809 810 811 823 826 834 838 841 850 851 852 854 854 854 857 863 875 881 895 908 910 911 913 924 925 939 941 960 962 965 965 967 969 978 978 982 982 985 985 1000 1010 1010 1022 1023 1026 1038 1047 1052 1055 1066 1069 1079 1080 1082 1088 1093 1093 1097 1109 1113 1113 1115 1116 1125 1137 1138 1141 1151 1163 1175 1183 1183 1194 1195 1200 1201 1203 1208 1210 1216 1224 1228 1229 1230 1240 1244 1252 1253 1260 1262 1269 1282 1288 1311 1314 1314 1323 1331 1331 1331 1339 1341 1342 1345 1347 1355 1356 1357 1359 1367 1390 1391 1400 1401 1410 1411 1434 1442 1444 1445 1446 1454 1456 1459 1460 1462 1470 1470 1470 1478 1487 1487 1490 1504 1513 1519 1532 1539 1541 1548 1549 1557 1561 1571 1572 1573 1577 1585 1591 1593 1598 1600 1601 1606 1607 1618 1618 1626 1638 1650 1660 1663 1664 1676 1685 1686 1688 1688 1692 1704 1708 1708 1713 1719 1721 1722 1732 1735 1746 1749 1754 1763 1775 1778 1779 1791 1791 1801 1816 1816 1819 1819 1823 1823 1832 1834 1836 1836 1839 1841 1860 1862 1876 1877 1888 1890 1891 1893 1906 1920 1926 1938 1944 1947 1947 1947 1949 1950 1951 1960 1963 1967 1975 1978 1990 1991 1992 2004 2005 2021 2025 2040 2044 2051 2053 2054 2057 2062 2064 2075 2078 2078 2078 2079 2088 2091 2103 2103 2104 2120 2123 2140 2141 2168 2168 2168 2172 2177 2179 2181 2185 2188 2191 2193 2201 2206 2209 2210 2210 2217 2222 2231 2240 2242 2255 2267 2283 2296 2296 2297 2298 2304 2308 2309 2310 2314 2316 2316 2319 2321 2322 2324 2337 2341 2345 2368 2370 2373 2395 2411 2411 2411 2423 2424 2429 2430 2432 2434 2435 2436 2444 2445 2447 2452 2452 2456 2460 2469 2472 2482 2517 2526 2536 2539 2539 2542 2542 2549 2551 2557 2558 2559 2560 2563 2567 2569 2571 2571 2573 2574 2575 2583 2600 2638 2645 2654 2664 2664 2670 2670 2670 2673 2673 2673 2673 2686 2686 2686 2687 2688 2688 2700 2702 2704 2714 2714 2801"
     # print(leaderboard_cyclopeptide_sequencing([int(x) for x in sp.split()], 200))
     sp = "0 97 99 113 114 115 128 128 147 147 163 186 227 241 242 244 244 256 260 261 262 283 291 309 330 333 340 347 385 388 389 390 390 405 435 447 485 487 503 504 518 544 552 575 577 584 599 608 631 632 650 651 653 672 690 691 717 738 745 770 779 804 818 819 827 835 837 875 892 892 917 932 932 933 934 965 982 989 1039 1060 1062 1078 1080 1081 1095 1136 1159 1175 1175 1194 1194 1208 1209 1223 1322"
-    print(leaderboard_cyclopeptide_sequencing([int(x) for x in sp.split()], 100))
+    print(leaderboard_cyclopeptide_sequencing_list([int(x) for x in sp.split()], 1000))
