@@ -18,6 +18,7 @@ def contig_generation(patterns):
     adj_list = de_bruijn_graph_fromkmer(patterns)
     return branches(adj_list)
 
+
 def branches(adj_list):
     """
     Paths ← empty list
@@ -80,7 +81,6 @@ def graph_degrees(graph):
                 degrees[j][0] += 1
             else:
                 degrees[j] = [1, 0]
-
     return degrees
 
 
