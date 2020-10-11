@@ -34,7 +34,7 @@ def leaderboard_cyclopeptide_sequencing(spectrum, n, amino_list=None):
         for peptide in leaderboard[:]:
             mass_peptide = mass(peptide)
             if mass_peptide == parent_mass:
-                if linear_score(peptide, spectrum) > linear_score(leader_peptide, spectrum):
+                if score(peptide, spectrum) > score(leader_peptide, spectrum):
                     leader_peptide = peptide
             elif mass_peptide > parent_mass:
                 leaderboard.remove(peptide)
@@ -56,13 +56,13 @@ def leaderboard_cyclopeptide_sequencing_list(spectrum, n, amino_list=None):
         for peptide in leaderboard[:]:
             mass_peptide = mass(peptide)
             if mass_peptide == parent_mass:
-                if linear_score(peptide, spectrum) > linear_score(leader_peptide, spectrum):
+                if score(peptide, spectrum) > score(leader_peptide, spectrum):
                     leader_peptide = peptide
                     leader_peptides = [{peptide: (peptide_to_masses(peptide), mass(peptide))}]
-                elif linear_score(peptide, spectrum) == linear_score(leader_peptide, spectrum):
+                elif score(peptide, spectrum) == score(leader_peptide, spectrum):
                     leader_peptides.append({peptide: (peptide_to_masses(peptide), mass(peptide))})
             elif mass_peptide > parent_mass:
-                leaderboard.remove(peptide)
+                leaderboard.remove(peptide)num
         leaderboard = trim(leaderboard, spectrum, n)
     return leader_peptides
 

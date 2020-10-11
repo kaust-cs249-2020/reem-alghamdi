@@ -19,6 +19,7 @@ def cyclic_spectrum(peptide):
     :return: the cyclic spectrum of peptide
     """
     prefix_max = prefix_max_array(peptide)
+    print(prefix_max)
     peptide_mass = prefix_max[len(peptide)]
     cyclic_spectrums = [0]
     for i in range(len(peptide)):
