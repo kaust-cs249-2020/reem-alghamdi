@@ -22,21 +22,18 @@ def format_weighted_adjacency_list(text):
     return adj_list, weights
 
 
-def longest_path_in_dag(start_node, end_node, adj_list_string):
-    # print(adj_list_string)
-    adj_list, weights = format_weighted_adjacency_list(adj_list_string)
-    # print(adj_list)
-    # print(weights)
+def longest_path_in_dag(start_node, end_node, adj_list, weights):
     ordering = topological_ordering(adj_list)
-    # print(ordering)
     # delete start node and everything before it
     ordering = ordering[ordering.index(start_node)+1:]
 
     # set weights to node = -infinity (or any other negative number really)
     s = {node: -1 for node in {t[0] for t in weights.keys()} or {t[1] for t in weights.keys()}}
     s[start_node] = 0
-    backtrack = {node: None for node in ordering}
+    # backtrack = {node: None for node in ordering}
+    backtrack = {}
     # print(backtrack)
+    # print(len(ordering))
     for node in ordering:
         # Sb = max[all predessesors a of b(Sa + weight from a to b)
         s_a = {k[0]: v for k, v in weights.items() if k[1] == node}
@@ -54,6 +51,9 @@ def longest_path_in_dag(start_node, end_node, adj_list_string):
 
 if __name__ == "__main__":
     with open("../data/dataset_369316_7.txt") as file:
-        s, path = longest_path_in_dag("0", "49", file.read())
+        # print(adj_list_string)
+        adj_list, weights = format_weighted_adjacency_list(file.read())
+        print(adj_list, weights)
+        s, path = longest_path_in_dag("0", "49", adj_list, weights)
         print(s)
         print('->'.join(path))

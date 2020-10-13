@@ -17,8 +17,9 @@ def topological_ordering(adj_list):
         candidates.remove(candidate)
         if adj_list.get(candidate):
             for node in adj_list.get(candidate)[:]:
+                degrees[candidate][1] += 1
+                degrees[node][0] -= 1
                 adj_list[candidate].remove(node)
-                degrees = graph_degrees(adj_list)
                 if not degrees.get(node) or degrees[node][0] == 0:
                     candidates.append(node)
 
