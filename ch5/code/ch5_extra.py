@@ -4,11 +4,12 @@ format graph using the score format
 """
 from ch5.code.ch5_08_2 import longest_path_in_dag
 from ch5.code.ch5_10 import blosum62_matrix, pam250_matrix, local_alignment
+from ch5.code.ch5_11 import fitting_alignment
 
 
 def two_strings_to_weighted_graph(v, w,
                                   scoring_matrix=None, sigma=None, matches=None, mismatches=None,
-                                  is_local=False):
+                                  is_local=False, is_fitted=False):
     # len_v = len(v)
     # len_w = len(w)
     # total_nodes = (len_v + 1) * (len_w + 1)
@@ -30,7 +31,10 @@ def two_strings_to_weighted_graph(v, w,
             weight = -1
             if sigma:
                 weight *= sigma
+
             nodes[node].append((node[0], node[1] + 1))
+            if is_fitted and node[0] == 0:
+                weight = 0
             weights[(node, (node[0], node[1] + 1))] = weight
 
         if (node[0] + 1, node[1]) in nodes.keys():
@@ -38,6 +42,8 @@ def two_strings_to_weighted_graph(v, w,
             if sigma:
                 weight *= sigma
             nodes[node].append((node[0] + 1, node[1]))
+            if is_fitted and node[1] == 0:
+                weight = 0
             weights[(node, (node[0] + 1, node[1]))] = weight
 
         if (node[0] + 1, node[1] + 1) in nodes.keys():
@@ -114,7 +120,7 @@ def global_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mis
 
 def local_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mismatches=None):
     # print("start")
-    adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches, True)
+    adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches, is_local=True)
     # print(adj_list)
     # print(weights)
     cost, path = longest_path_in_dag((0, 0), sink, adj_list, weights, is_local=True)
@@ -166,6 +172,74 @@ def edit_distance_v2(v, w):
                 count += 1
     return count
 
+
+def fitting_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mismatches=None):
+    """
+    correct score and correct right trim .. I need to trim the left side and fix the - added
+    """
+    # print("start")
+    adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches, is_fitted=True)
+    # print(adj_list)
+    # print(weights)
+    cost, path = longest_path_in_dag((0, 0), sink, adj_list, weights, is_fitting=True)
+    # print(path)
+    sink = path[-1]
+
+    print(sink)
+    print(v, w)
+    v = v[:sink[1]]
+    w = w[:sink[0]]
+    print(v, w)
+    start = sink[1]
+    for index, n in enumerate(path):
+        i = n[0]
+        j = n[1]
+        if index < len(path) - 1:
+            next = path[index + 1]
+            k = next[0]
+            l = next[1]
+            if k == (i + 1) and l == j:  # if the next is horizontal
+                v = v[:i] + "-" + v[i:]
+            elif k == i and l == (j + 1):  # if the next is vertical
+                 w = w[:j] + "-" + w[j:]
+            else:
+                start -= 1
+    v = v[start:]
+    return cost, v, w
+
+
+def overlap_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mismatches=None):
+    # print("start")
+    adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches)
+    # print(adj_list)
+    # print(weights)
+    cost, path = longest_path_in_dag((0, 0), sink, adj_list, weights, is_overlap=True)
+    # print(path)
+    sink = path[-1]
+    print(path)
+    v = v[:sink[1]]
+    w = w[:sink[0]]
+
+    start = None
+    for index, n in enumerate(path):
+        i = n[0]
+        j = n[1]
+        if index < len(path) - 1:
+            next = path[index + 1]
+            k = next[0]
+            l = next[1]
+            if k == (i + 1) and l == j:  # if the next is horizontal
+                v = v[:i] + "-" + v[i:]
+            elif k == i and l == (j + 1):  # if the next is vertical
+                w = w[:j] + "-" + w[j:]
+            # elif k == (i + 1) and l == (j + 1): # if the next is diagonal
+            if not start:
+                start = (i, j)
+    v = v[start[1]:]
+    w = w[start[0]:]
+    return cost, v, w
+
+
 if __name__ == "__main__":
     # print(longest_common_sequence_v2("GACT", "ATG"))
     # print(longest_common_sequence_v2("ACTGAG", "GACTGG"))
@@ -207,10 +281,21 @@ if __name__ == "__main__":
     # print(v)
     # print(w)
 
-    print(edit_distance_v2("PLEASANTLY", "MEANLY"))
-    print(edit_distance_v2("GAGA", "GAT"))
-    print(edit_distance_v2("GACT", "ATG"))
-    print(edit_distance_v2("AC", "AC"))
-    print(edit_distance_v2("AT", "G"))
-    print(edit_distance_v2("CAGACCGAGTTAG", "CGG"))
-    print(edit_distance_v2("CGT", "CAGACGGTGACG"))
+    # print(edit_distance_v2("PLEASANTLY", "MEANLY"))
+    # print(edit_distance_v2("GAGA", "GAT"))
+    # print(edit_distance_v2("GACT", "ATG"))
+    # print(edit_distance_v2("AC", "AC"))
+    # print(edit_distance_v2("AT", "G"))
+    # print(edit_distance_v2("CAGACCGAGTTAG", "CGG"))
+    # print(edit_distance_v2("CGT", "CAGACGGTGACG"))
+    # print(edit_distance_v2("GGACRNQMSEVNMWGCWWASVWVSWCEYIMPSGWRRMKDRHMWHWSVHQQSSPCAKSICFHETKNQWNQDACGPKVTQHECMRRRLVIAVKEEKSRETKMLDLRHRMSGRMNEHNVTLRKSPCVKRIMERTTYHRFMCLFEVVPAKRQAYNSCDTYTMMACVAFAFVNEADWWKCNCAFATVPYYFDDSCRMVCGARQCYRLWQWEVNTENYVSIEHAEENPFSKLKQQWCYIPMYANFAWSANHMFWAYIANELQLDWQHPNAHPIKWLQNFLMRPYHPNCGLQHKERITPLHKSFYGMFTQHHLFCKELDWRIMAHANRYYCIQHGWHTNNPMDPIDTRHCCMIQGIPKRDHHCAWSTCDVAPLQGNWMLMHHCHHWNRVESMIQNQHEVAAGIKYWRLNRNGKLPVHTADNYGVLFQRWWFLGWYNFMMWHYSLHFFAVNFYFPELNAGQMPRFQDDQNRDDVYDTCIWYFAWSNTEFMEVFGNMMMYSRPMTKMGFHGMMLPYIAINGLRSISHVNKGIGPISGENCNLSTGLHHYGQLRMVMCGYCTPYRTEVKNQREMISAVHCHQHIDWRWIWCSGHWFGSNKCDLRIEDLQNYEPAKNKSNWPYMKECRKTEPYQDNIETMFFHQHDLARDSGYIANGWHENCRQHQDFSNTFAGGHKGTPKGEHMRRSLYVWDTDCVEKCQWVPELFALCWWTPLPDGVPVMLGTYRQYMFGLVVLYWFEVKYSCHNSWDYYNFHEGTMKDSDPENWCFWGMQIIQFHDHGKPEFFQDPMKQIIKTECTAYNSFMMGHIGKTTIVYLVSYIGRLWMKSCCLTWPPYATAPIKWAEETLLDFGQGPHPKYACHFTHQNMIRLAKLPMYWLWKLMFHE", "GMWGFVQVSTQSRFRHMWHWSVHQQSSECAKSICHHEWKNQWNQDACGPKVTQHECMANMPMHKCNNWFWRLVIAVKEEKVRETKMLDLIHRHWLVLNQGRMNEHNVTLRKSPCVKRIMHKWKSRTTFHRFMCLMASEVVPAKRGAQCWRQLGTYATYTVYTMMACVAFAFEYQQDNDNEADWWKCNCAFVPVYFDDSCRPVVGAFQCYRLGLPFGTGWNYAEENPFSKLKQQMHRKTMGECKNMMIWAYCANELQLPIKWGSMYHEHDFQLPPYHPNRFHKIRITILHKSFYGMFTQHHLFCKELDWRIMAWANRYYCIQHGWHTNNPDDPITRHKCMIQGGQNSRNADIRHMPVQCGNWGHAIGLEMPMPMHHCHHANRVESMIQTQHYWGPKLNRNADWWFLGWQNFEIFRMPILRWMGAYEWHYSLHFFAVNFYFPELNAGQMPRFQDDQNNNACYDVWAWSNTEFMEVNGIKKLRFGNMMMYSRPMTKMGFHGMMKSRSISHVNKGIGPISGENCSTGLHHYGQLTEVKNQREMISAVHCHQHIWCKCDLRIEPAKNKGYWPYQKEFCWRKQINSRKTEPYQVAPVINIETMFFDFWYIANGMHENCRRTGHKPNPDCVEKCQWVPELFALCWWRAMPDGVPVMLGTMFGLVVYWFEVKYSCHNSLYRRVTDYYNFHEGTMKDHEVPWNWDNEHCHDHGKAEFFFQMLKIPICDPMKAIIPSTEMVNTPWHPFSFMMGHDGKTTIVYSGSYIGRLWVPSRWKPYAPANWKMPIKWAEETLLMVPHPHFTHQQLWGTTLRLAKLPMYWLWKLMFHHLFGVK"))
+
+    # print(fitting_alignment_v2("GTAGGCTTAAGGTTA", "TAGATA"))
+    print(fitting_alignment_v2("GAGA", "GAT", sigma=2, matches=1, mismatches=1))
+    print(fitting_alignment_v2("CCAT", "AT", sigma=1, matches=1, mismatches=1))
+    print(fitting_alignment_v2("CACGTC", "AT", sigma=1, matches=1, mismatches=5))
+    print(fitting_alignment_v2("ATCC", "AT", sigma=1, matches=1, mismatches=1))
+    print(fitting_alignment_v2("ACGACAGAG", "CGAGAGGTT", sigma=1, matches=2, mismatches=3))
+    print(fitting_alignment_v2("CAAGACTACTATTAG", "GG", sigma=1, matches=10, mismatches=1))
+
+    # print(overlap_alignment_v2("PAWHEAE", "HEAGAWGHEE", sigma=2, matches=1, mismatches=2))

@@ -24,13 +24,13 @@ def format_weighted_adjacency_list(text):
     return adj_list, weights
 
 
-def longest_path_in_dag(start_node, end_node, adj_list, weights, is_local=False):
+def longest_path_in_dag(start_node, end_node, adj_list, weights, is_local=False, is_fitting=False, is_overlap=False):
     ordering = topological_ordering(adj_list)
     # delete start node and everything before it
     ordering = ordering[ordering.index(start_node)+1:]
 
     # set weights to node = -infinity (or any other negative number really)
-    s = {node: -1 for node in {t[0] for t in weights.keys()} or {t[1] for t in weights.keys()}}
+    s = {node: -float("inf") for node in {t[0] for t in weights.keys()} or {t[1] for t in weights.keys()}}
     s[start_node] = 0
     # backtrack = {node: None for node in ordering}
     backtrack = {}
@@ -45,6 +45,12 @@ def longest_path_in_dag(start_node, end_node, adj_list, weights, is_local=False)
 
     if is_local:
         end_node = max(s.items(), key=operator.itemgetter(1))[0]
+
+    if is_fitting:
+        # print(sorted(s.items()))
+        # print(list({k: v for k, v in s.items() if k[0] == end_node[0]}.values()))
+        end_node = max({k: v for k, v in s.items() if k[0] == end_node[0]}.items(), key=operator.itemgetter(1))[0]
+        # print(end_node)
 
     path = [end_node]
     while path[0] != start_node:
