@@ -33,7 +33,7 @@ def longest_path_in_dag(start_node, end_node, adj_list, weights):
     # backtrack = {node: None for node in ordering}
     backtrack = {}
     # print(backtrack)
-    # print(len(ordering))
+    print(len(ordering))
     for node in ordering:
         # Sb = max[all predessesors a of b(Sa + weight from a to b)
         s_a = {k[0]: v for k, v in weights.items() if k[1] == node}
