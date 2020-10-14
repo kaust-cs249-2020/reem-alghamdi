@@ -9,7 +9,7 @@ from ch5.code.ch5_11 import fitting_alignment
 
 def two_strings_to_weighted_graph(v, w,
                                   scoring_matrix=None, sigma=None, matches=None, mismatches=None,
-                                  is_local=False, is_fitted=False):
+                                  is_local=False, is_fitted=False, is_overlap=False):
     # len_v = len(v)
     # len_w = len(w)
     # total_nodes = (len_v + 1) * (len_w + 1)
@@ -34,6 +34,8 @@ def two_strings_to_weighted_graph(v, w,
 
             nodes[node].append((node[0], node[1] + 1))
             if is_fitted and node[0] == 0:
+                weight = 0
+            if is_overlap and node[0] == 0:
                 weight = 0
             weights[(node, (node[0], node[1] + 1))] = weight
 
@@ -212,17 +214,17 @@ def fitting_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mi
 
 def overlap_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mismatches=None):
     # print("start")
-    adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches)
+    adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches, is_overlap=True)
     # print(adj_list)
     # print(weights)
     cost, path = longest_path_in_dag((0, 0), sink, adj_list, weights, is_overlap=True)
-    # print(path)
-    sink = path[-1]
     print(path)
-    v = v[:sink[1]]
-    w = w[:sink[0]]
+    print(v, w)
+    sink = path[-1]
 
-    start = None
+    start = False
+    cut = 0
+
     for index, n in enumerate(path):
         i = n[0]
         j = n[1]
@@ -231,14 +233,20 @@ def overlap_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mi
             k = next[0]
             l = next[1]
             if k == (i + 1) and l == j:  # if the next is horizontal
-                v = v[:i] + "-" + v[i:]
+                v = v[:j] + "-" + v[j:]
+                start = True
             elif k == i and l == (j + 1):  # if the next is vertical
-                w = w[:j] + "-" + w[j:]
-            # elif k == (i + 1) and l == (j + 1): # if the next is diagonal
-            if not start:
-                start = (i, j)
-    v = v[start[1]:]
-    w = w[start[0]:]
+                if not start:
+                    cut += 1
+                else:
+                    w = w[:i] + "-" + w[i:]
+                    start = True
+            else:
+                start = True
+    # print(start)
+    v = v[cut:]
+    # v = v[:sink[0]]
+    # w = w[:len(v)]
     return cost, v, w
 
 
@@ -293,11 +301,18 @@ if __name__ == "__main__":
     # print(edit_distance_v2("GGACRNQMSEVNMWGCWWASVWVSWCEYIMPSGWRRMKDRHMWHWSVHQQSSPCAKSICFHETKNQWNQDACGPKVTQHECMRRRLVIAVKEEKSRETKMLDLRHRMSGRMNEHNVTLRKSPCVKRIMERTTYHRFMCLFEVVPAKRQAYNSCDTYTMMACVAFAFVNEADWWKCNCAFATVPYYFDDSCRMVCGARQCYRLWQWEVNTENYVSIEHAEENPFSKLKQQWCYIPMYANFAWSANHMFWAYIANELQLDWQHPNAHPIKWLQNFLMRPYHPNCGLQHKERITPLHKSFYGMFTQHHLFCKELDWRIMAHANRYYCIQHGWHTNNPMDPIDTRHCCMIQGIPKRDHHCAWSTCDVAPLQGNWMLMHHCHHWNRVESMIQNQHEVAAGIKYWRLNRNGKLPVHTADNYGVLFQRWWFLGWYNFMMWHYSLHFFAVNFYFPELNAGQMPRFQDDQNRDDVYDTCIWYFAWSNTEFMEVFGNMMMYSRPMTKMGFHGMMLPYIAINGLRSISHVNKGIGPISGENCNLSTGLHHYGQLRMVMCGYCTPYRTEVKNQREMISAVHCHQHIDWRWIWCSGHWFGSNKCDLRIEDLQNYEPAKNKSNWPYMKECRKTEPYQDNIETMFFHQHDLARDSGYIANGWHENCRQHQDFSNTFAGGHKGTPKGEHMRRSLYVWDTDCVEKCQWVPELFALCWWTPLPDGVPVMLGTYRQYMFGLVVLYWFEVKYSCHNSWDYYNFHEGTMKDSDPENWCFWGMQIIQFHDHGKPEFFQDPMKQIIKTECTAYNSFMMGHIGKTTIVYLVSYIGRLWMKSCCLTWPPYATAPIKWAEETLLDFGQGPHPKYACHFTHQNMIRLAKLPMYWLWKLMFHE", "GMWGFVQVSTQSRFRHMWHWSVHQQSSECAKSICHHEWKNQWNQDACGPKVTQHECMANMPMHKCNNWFWRLVIAVKEEKVRETKMLDLIHRHWLVLNQGRMNEHNVTLRKSPCVKRIMHKWKSRTTFHRFMCLMASEVVPAKRGAQCWRQLGTYATYTVYTMMACVAFAFEYQQDNDNEADWWKCNCAFVPVYFDDSCRPVVGAFQCYRLGLPFGTGWNYAEENPFSKLKQQMHRKTMGECKNMMIWAYCANELQLPIKWGSMYHEHDFQLPPYHPNRFHKIRITILHKSFYGMFTQHHLFCKELDWRIMAWANRYYCIQHGWHTNNPDDPITRHKCMIQGGQNSRNADIRHMPVQCGNWGHAIGLEMPMPMHHCHHANRVESMIQTQHYWGPKLNRNADWWFLGWQNFEIFRMPILRWMGAYEWHYSLHFFAVNFYFPELNAGQMPRFQDDQNNNACYDVWAWSNTEFMEVNGIKKLRFGNMMMYSRPMTKMGFHGMMKSRSISHVNKGIGPISGENCSTGLHHYGQLTEVKNQREMISAVHCHQHIWCKCDLRIEPAKNKGYWPYQKEFCWRKQINSRKTEPYQVAPVINIETMFFDFWYIANGMHENCRRTGHKPNPDCVEKCQWVPELFALCWWRAMPDGVPVMLGTMFGLVVYWFEVKYSCHNSLYRRVTDYYNFHEGTMKDHEVPWNWDNEHCHDHGKAEFFFQMLKIPICDPMKAIIPSTEMVNTPWHPFSFMMGHDGKTTIVYSGSYIGRLWVPSRWKPYAPANWKMPIKWAEETLLMVPHPHFTHQQLWGTTLRLAKLPMYWLWKLMFHHLFGVK"))
 
     # print(fitting_alignment_v2("GTAGGCTTAAGGTTA", "TAGATA"))
-    print(fitting_alignment_v2("GAGA", "GAT", sigma=2, matches=1, mismatches=1))
-    print(fitting_alignment_v2("CCAT", "AT", sigma=1, matches=1, mismatches=1))
-    print(fitting_alignment_v2("CACGTC", "AT", sigma=1, matches=1, mismatches=5))
-    print(fitting_alignment_v2("ATCC", "AT", sigma=1, matches=1, mismatches=1))
-    print(fitting_alignment_v2("ACGACAGAG", "CGAGAGGTT", sigma=1, matches=2, mismatches=3))
-    print(fitting_alignment_v2("CAAGACTACTATTAG", "GG", sigma=1, matches=10, mismatches=1))
+    # print(fitting_alignment_v2("GAGA", "GAT", sigma=2, matches=1, mismatches=1))
+    # print(fitting_alignment_v2("CCAT", "AT", sigma=1, matches=1, mismatches=1))
+    # print(fitting_alignment_v2("CACGTC", "AT", sigma=1, matches=1, mismatches=5))
+    # print(fitting_alignment_v2("ATCC", "AT", sigma=1, matches=1, mismatches=1))
+    # print(fitting_alignment_v2("ACGACAGAG", "CGAGAGGTT", sigma=1, matches=2, mismatches=3))
+    # print(fitting_alignment_v2("CAAGACTACTATTAG", "GG", sigma=1, matches=10, mismatches=1))
 
-    # print(overlap_alignment_v2("PAWHEAE", "HEAGAWGHEE", sigma=2, matches=1, mismatches=2))
+    print(overlap_alignment_v2("PAWHEAE", "HEAGAWGHEE", sigma=2, matches=1, mismatches=2))
+    print(overlap_alignment_v2("GAGA", "GAT", sigma=2, matches=1, mismatches=1))
+    print(overlap_alignment_v2("CCAT", "AT", sigma=1, matches=1, mismatches=1))
+    print(overlap_alignment_v2("GAT", "CAT", sigma=1, matches=1, mismatches=5))
+    print(overlap_alignment_v2("ATCACT", "AT", sigma=1, matches=1, mismatches=5))
+    print(overlap_alignment_v2("ATCACT", "ATG", sigma=5, matches=1, mismatches=5))
+    print(overlap_alignment_v2("CAGAGATGGCCG", "ACG", sigma=1, matches=3, mismatches=2))
+    print(overlap_alignment_v2("CTT", "AGCATAAAGCATT", sigma=1, matches=2, mismatches=3))

@@ -36,12 +36,20 @@ def longest_path_in_dag(start_node, end_node, adj_list, weights, is_local=False,
     backtrack = {}
     # print(backtrack)
     # print(len(ordering))
+    if is_overlap:
+        indices = (-1, -1)
+        max_score = -float("inf")
     for node in ordering:
         # Sb = max[all predessesors a of b(Sa + weight from a to b)
         s_a = {k[0]: v for k, v in weights.items() if k[1] == node}
         s_a = {a: s[a] + w for a, w in s_a.items()}
         # print(s_a)
         backtrack[node], s[node] = max(s_a.items(), key=lambda k: k[1])
+        if is_overlap:
+            if node[1] == end_node[1]:
+                if s[node] >= max_score:
+                    indices = node
+                    max_score = s[node]
 
     if is_local:
         end_node = max(s.items(), key=operator.itemgetter(1))[0]
@@ -52,6 +60,8 @@ def longest_path_in_dag(start_node, end_node, adj_list, weights, is_local=False,
         end_node = max({k: v for k, v in s.items() if k[0] == end_node[0]}.items(), key=operator.itemgetter(1))[0]
         # print(end_node)
 
+    if is_overlap:
+        end_node = indices
     path = [end_node]
     while path[0] != start_node:
         path = [backtrack[path[0]]] + path
