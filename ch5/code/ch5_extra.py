@@ -101,7 +101,7 @@ def global_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mis
     adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches)
     # print("adj_list")
     cost, path = longest_path_in_dag((0, 0), sink, adj_list, weights)
-    # print("path")
+    print(path)
     for index, n in enumerate(path):
         i = n[0]
         j = n[1]
@@ -182,15 +182,8 @@ def fitting_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mi
     # print(adj_list)
     # print(weights)
     cost, path = longest_path_in_dag((0, 0), sink, adj_list, weights, is_fitting=True)
-    # print(path)
-    sink = path[-1]
-
-    print(sink)
-    print(v, w)
-    v = v[:sink[1]]
-    w = w[:sink[0]]
-    print(v, w)
-    start = sink[1]
+    start = False
+    cut = 0
     for index, n in enumerate(path):
         i = n[0]
         j = n[1]
@@ -199,12 +192,21 @@ def fitting_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mi
             k = next[0]
             l = next[1]
             if k == (i + 1) and l == j:  # if the next is horizontal
-                v = v[:i] + "-" + v[i:]
+                v = v[:j] + "-" + v[j:]
+                start = True
             elif k == i and l == (j + 1):  # if the next is vertical
-                 w = w[:j] + "-" + w[j:]
+                if not start:
+                    # print("cut", v, v[1:])
+                    cut += 1
+                else:
+                    w = w[:i] + "-" + w[i:]
+                    start = True
             else:
-                start -= 1
-    v = v[start:]
+                start = True
+
+    v = v[cut:]
+    v = v[:len(w)]
+
     return cost, v, w
 
 

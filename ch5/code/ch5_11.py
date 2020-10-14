@@ -60,16 +60,14 @@ def fitting_alignment(v, w):
 
     j = len_w
     # print(s)
-    print(s[:, j])
     i = s[:, j].argmax()
-    print(i, j)
     score_max = s[i][j]
 
     v = v[:i]
     w = w[:j]
-    print(v, w)
 
     while i != 0 and j != 0:
+        print(backtrack[i][j], end=", ")
         if backtrack[i][j] == "↓":  # first option si-1,j - sigma
             i -= 1
             w = w[:j] + "-" + w[j:]
@@ -79,7 +77,6 @@ def fitting_alignment(v, w):
         else:  # third option si-1, j-1
             i -= 1
             j -= 1
-    print(i)
     v = v[i:]
 
     return score_max, v, w
