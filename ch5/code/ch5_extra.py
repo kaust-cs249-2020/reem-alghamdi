@@ -91,11 +91,11 @@ def longest_common_sequence_v2(v, w):
 
 def global_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mismatches=None):
     # first, build the graph string
-    print("start")
+    # print("start")
     adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches)
-    print("adj_list")
+    # print("adj_list")
     cost, path = longest_path_in_dag((0, 0), sink, adj_list, weights)
-    print("path")
+    # print("path")
     for index, n in enumerate(path):
         i = n[0]
         j = n[1]
@@ -143,6 +143,29 @@ def local_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mism
     return cost, v, w
 
 
+def edit_distance_v2(v, w):
+    # first, build the graph string
+    # print("start")
+    adj_list, weights, sink = two_strings_to_weighted_graph(v, w)
+    # print("got adj string")
+    path = longest_path_in_dag((0, 0), sink, adj_list, weights)[1]
+    # print("got path")
+    count = 0
+    for index, n in enumerate(path):
+        i = n[0]
+        j = n[1]
+        if index < len(path) - 1:  # if the next node is diagonal
+            next = path[index + 1]
+            k = next[0]
+            l = next[1]
+            if k == (i + 1) and l == j:  # if the next is horizontal
+                count += 1
+            elif k == i and l == (j + 1):  # if the next is vertical
+                count += 1
+            elif k == (i + 1) and l == (j + 1) and weights[(i, j), (k, l)] != 1:
+                count += 1
+    return count
+
 if __name__ == "__main__":
     # print(longest_common_sequence_v2("GACT", "ATG"))
     # print(longest_common_sequence_v2("ACTGAG", "GACTGG"))
@@ -183,3 +206,11 @@ if __name__ == "__main__":
     # print(cost)
     # print(v)
     # print(w)
+
+    print(edit_distance_v2("PLEASANTLY", "MEANLY"))
+    print(edit_distance_v2("GAGA", "GAT"))
+    print(edit_distance_v2("GACT", "ATG"))
+    print(edit_distance_v2("AC", "AC"))
+    print(edit_distance_v2("AT", "G"))
+    print(edit_distance_v2("CAGACCGAGTTAG", "CGG"))
+    print(edit_distance_v2("CGT", "CAGACGGTGACG"))
