@@ -3,10 +3,12 @@ REDO USING 5.8_2
 format graph using the score format
 """
 from ch5.code.ch5_08_2 import longest_path_in_dag
-from ch5.code.ch5_10 import blosum62_matrix, pam250_matrix
+from ch5.code.ch5_10 import blosum62_matrix, pam250_matrix, local_alignment
 
 
-def two_strings_to_weighted_graph(v, w, scoring_matrix=None, sigma=None, matches=None, mismatches=None):
+def two_strings_to_weighted_graph(v, w,
+                                  scoring_matrix=None, sigma=None, matches=None, mismatches=None,
+                                  is_local=False):
     # len_v = len(v)
     # len_w = len(w)
     # total_nodes = (len_v + 1) * (len_w + 1)
@@ -14,6 +16,7 @@ def two_strings_to_weighted_graph(v, w, scoring_matrix=None, sigma=None, matches
     nodes = {}
     weights = {}
     sink = (0, 0)
+    start = (0, 0)
     # initialize the nodes
     for j, b in enumerate(w + "-"):
         for i, a in enumerate(v + "-"):
@@ -47,6 +50,22 @@ def two_strings_to_weighted_graph(v, w, scoring_matrix=None, sigma=None, matches
             nodes[node].append((node[0] + 1, node[1] + 1))
             weights[(node, (node[0] + 1, node[1] + 1))] = weight
 
+        if is_local:
+            if node != (0, 0):
+                if weights.get((start, node)):
+                    if weights.get((start, node)) < 0:
+                        weights[(start, node)] = 0
+                else:
+                    nodes[start].append(node)
+                    weights[(start, node)] = 0
+
+            if node != sink:
+                if weights.get((node, sink)):
+                    if weights.get((node, sink)) < 0:
+                        weights[(node, sink)] = 0
+                else:
+                    edges.append(sink)
+                    weights[(node, sink)] = 0
     return nodes, weights, sink
 
 
@@ -93,6 +112,37 @@ def global_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mis
     return cost, v, w
 
 
+def local_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mismatches=None):
+    # print("start")
+    adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches, True)
+    # print(adj_list)
+    # print(weights)
+    cost, path = longest_path_in_dag((0, 0), sink, adj_list, weights, is_local=True)
+    # print(path)
+    sink = path[-1]
+
+    v = v[:sink[1]]
+    w = w[:sink[0]]
+    start = None
+    for index, n in enumerate(path):
+        i = n[0]
+        j = n[1]
+        if index < len(path) - 1:
+            next = path[index + 1]
+            k = next[0]
+            l = next[1]
+            if weights[((i, j), (k, l))] != 0:
+                if k == (i + 1) and l == j:  # if the next is horizontal
+                    v = v[:i] + "-" + v[i:]
+                elif k == i and l == (j + 1):  # if the next is vertical
+                    w = w[:j] + "-" + w[j:]
+                if not start:
+                    start = (i, j)
+    v = v[start[1]:]
+    w = w[start[0]:]
+    return cost, v, w
+
+
 if __name__ == "__main__":
     # print(longest_common_sequence_v2("GACT", "ATG"))
     # print(longest_common_sequence_v2("ACTGAG", "GACTGG"))
@@ -116,6 +166,20 @@ if __name__ == "__main__":
     # v="ILYPRQSMICMSFCFWDMWKKDVPVVLMMFLERRQMQSVFSWLVTVKTDCGKGIYNHRKYLGLPTMTAGDWHWIKKQNDPHEWFQGRLETAWLHSTFLYWKYFECDAVKVCMDTFGLFGHCDWDQQIHTCTHENEPAIAFLDLYCRHSPMCDKLYPVWDMACQTCHFHHSWFCRNQEMWMKGDVDDWQWGYHYHTINSAQCNQWFKEICKDMGWDSVFPPRHNCQRHKKCMPALYAGIWMATDHACTFMVRLIYTENIAEWHQVYCYRSMNMFTCGNVCLRCKSWIFVKNYMMAPVVNDPMIEAFYKRCCILGKAWYDMWGICPVERKSHWEIYAKDLLSFESCCSQKKQNCYTDNWGLEYRLFFQSIQMNTDPHYCQTHVCWISAMFPIYSPFYTSGPKEFYMWLQARIDQNMHGHANHYVTSGNWDSVYTPEKRAGVFPVVVPVWYPPQMCNDYIKLTYECERFHVEGTFGCNRWDLGCRRYIIFQCPYCDTMKICYVDQWRSIKEGQFRMSGYPNHGYWFVHDDHTNEWCNQPVLAKFVRSKIVAICKKSQTVFHYAYTPGYNATWPQTNVCERMYGPHDNLLNNQQNVTFWWKMVPNCGMQILISCHNKMKWPTSHYVFMRLKCMHVLMQMEYLDHFTGPGEGDFCRNMQPYMHQDLHWEGSMRAILEYQAEHHRRAFRAELCAQYDQEIILWSGGWGVQDCGFHANYDGSLQVVSGEPCSMWCTTVMQYYADCWEKCMFA"
     # w="ILIPRQQMGCFPFPWHFDFCFWSAHHSLVVPLNPQMQTVFQNRGLDRVTVKTDCHDHRWKWIYNLGLPTMTAGDWHFIKKHVVRANNPHQWFQGRLTTAWLHSTFLYKKTEYCLVRHSNCCHCDWDQIIHTCAFIAFLDLYQRHWPMCDKLYCHFHHSWFCRNQEMSMDWNQWFPWDSVPRANCLEEGALIALYAGIWANSMKRDMKTDHACTVRLIYVCELHAWLKYCYTSINMLCGNVCLRCKSWIFVKLFYMYAPVVNTIEANSPHYYKRCCILGQGICPVERKSHCEIYAKDLLSFESCCSQKQNCYTDNWGLEYRLFFQHIQMECTDPHANRGWTSCQTAKYWHFNLDDRPPKEFYMWLQATPTDLCMYQHCLMFKIVKQNFRKQHGHANPAASTSGNWDSVYTPEKMAYKDWYVSHPPVDMRRNGSKMVPVWYPPGIWHWKQSYKLTYECFFTVPGRFHVEGTFGCNRWDHQPGTRRDRQANHQFQCPYSDTMAIWEHAYTYVDQWRSIKEGQMPMSGYPNHGQWNVHDDHTNEQERSPICNQPVLAKFVRSKNVSNHEICKKSQTVFHWACEAQTNVCERMLNNQHVAVKRNVTFWWQMVPNCLWSCHNKMTWPTRPEQHRLFFVKMRLKCMHEYLDVAPSDFCRNMQAYMHSMRAILEYQADFDLKRRLRAIAPMDLCAQYDQEIILWSGGYIYDQSLQVVSCEGCSYYADCYVKCINVKEKCMFA"
     # cost, v, w = global_alignment_v2(v, w, scoring_matrix=blosum62_matrix, sigma=5)
+    # print(cost)
+    # print(v)
+    # print(w)
+
+    # print(local_alignment_v2("MEANLY", "PENALTY", scoring_matrix=pam250_matrix, sigma=5))
+    # print(local_alignment_v2("GAGA", "GAT", sigma=2, matches=1, mismatches=1))
+    # print(local_alignment_v2("AGC", "ATC", sigma=1, matches=3, mismatches=3))
+    # print(local_alignment_v2("AT", "AG", sigma=1, matches=1, mismatches=1))
+    # print(local_alignment_v2("TAACG", "ACGTG", sigma=1, matches=1, mismatches=1))
+    # print(local_alignment_v2("CAGAGATGGCCG", "ACG", sigma=1, matches=3, mismatches=2))
+    # print(local_alignment_v2("CTT", "AGCATAAAGCATT", sigma=1, matches=2, mismatches=3))
+    # v = "AMTAFRYRQGNPRYVKHFAYEIRLSHIWLLTQMPWEFVMGIKMPEDVFQHWRVYSVCTAEPMRSDETYEQKPKPMAKWSGMTIMYQAGIIRQPPRGDRGVSDRNYSQCGKQNQAQLDNNPTWTKYEIEWRVQILPPGAGVFEGDNGQNQCLCPNWAWEQPCQWGALHSNEQYPNRIHLWAPMSKLHIKIEKSSYNRNAQFPNRCMYECEFPSYREQVDSCHYENVQIAFTIFSGAEQKRKFCSCHFWSNFIDQAVFSTGLIPWCYRRDDHSAFFMPNWNKQYKHPQLQFRVAGEGTQCRPFYTREMFTKVSAWRIAGRFAGPYERHHDAHLELWYQHHKVRTGQQLGIIWNNRDKTRNPCPFSAYYNKLPWWKINQNAFYNCLQNIAHSTHDETHEFNPVKCIDWLQGTMVPTECKKGFVHEKCECYRNPGPPLHDMYHQMEDIFGVRFDCLTGWKHLSDYNPCQERRNINDFYIFAYEIAPAVKNLVLSPQPLADATKKCAFNYTPLDQSPVVIACKWYIHQPICMLLIVLICAMDKYNAHMIVIRTTEGQQPMHACRMTEGPGMCMKEPLVTFTLPAQWQWPNHEFKYVYMYVLNYHLSQYTYTDEGHAGGQHYSFNVAVDVGMAWGHNRCYCQPACYSQQETQTRTIDYEKWQYMKHQAFKWGLWFCEQERHAWFKGQNRCEMFTAKMTRMGADSNLDQYKLMLAQNYEEQWEQPIMECGMSEIIEIDPPYRSELIFTFWPFCTYSPWQNLIKCRCNNVIEEMDQCVPLTFIGFGVKQAGGIQAWAFYKEEWTSTYYLMCQCMKSDKAQYPYEIILFWMQPMDTGEQEPPQQNMWIFLPHSWFFDWCCNAPWSEICSSRHDHGQCQDAFYPCELFTVFDDIFTAEPVVCSCFYDDPM"
+    # w = "WQEKAVDGTVPSRHQYREKEDRQGNEIGKEFRRGPQVCEYSCNSHSCGWMPIFCIVCMSYVAFYCGLEYPMSRKTAKSQFIEWCDWFCFNHWTNWAPLSIVRTSVAFAVWGHCWYPCGGVCKTNRCKDDFCGRWRKALFAEGPRDWKCCKNDLQNWNPQYSQGTRNTKRMVATTNQTMIEWKQSHIFETWLFCHVIIEYNWSAFWMWMNRNEAFNSIIKSGYPKLLLTQYPLSQGSTPIVKPLIRRDQGKFWAWAQMWWFREPTNIPTADYCHSWWQSRADLQNDRDMGPEADASFYVEFWYWVRCAARTYGQQLGIIWNNRLKTRNPCPYSADGIQNKENYVFWWKNMCTKSHIAFYYCLQNVAHYTHDVTAEFNPVKCIDWLQGHMVLSSWFKYNTECKKLFVHEKCECYRMFCGVVEDIFGVRFHTGWKHLSTAKPVPHVCVYNPSVQERRNINDFYIFYEIAPAVKNLVLSAQPLHDYTKKCAFNYTPITITRIISTRNQIIWAHVVIACQFYSPHQMLLIELAMDKYCADMNVRRSTEGHQPMHACRSTFGPGMAAKEPLVTFTLVAFWQWPNHEFQYVYMYTEDKIIQIGPHLSNGCEMVEYCVDCYAKRPCYRAYSAEAQYWRMITEAEDYSYKTRNAIAATATVRGQYCHPFRWLGIVWMAHHDCFFANECGTICIPQMAEMRPPETTPYEIDIIFMMFWKEHMSTTILDVVGMYRPATFSHWHDAHHQCEPYLTPLMCQSKLVFDAAFTQVGVKGVWYHTEKLELMAGFNHMKFKKEEAQQSCFYWFQDCPDYDPPDAVRKTDEKHIRAHGEIWWLMRYYCMYHILHIASRHEWMHLRWDQACTNPGYELFEFIPWVLRRYVVYDKIRYNYSYRNSASMEFV"
+    # cost, v, w = local_alignment_v2(v, w, sigma=1, matches=2, mismatches=3)
     # print(cost)
     # print(v)
     # print(w)

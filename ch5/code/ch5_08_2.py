@@ -2,6 +2,8 @@
 @BY: Reem Alghamdi
 @DATE: 04-10-2020
 """
+import operator
+
 from ch5.code.ch5_17 import topological_ordering
 
 
@@ -22,7 +24,7 @@ def format_weighted_adjacency_list(text):
     return adj_list, weights
 
 
-def longest_path_in_dag(start_node, end_node, adj_list, weights):
+def longest_path_in_dag(start_node, end_node, adj_list, weights, is_local=False):
     ordering = topological_ordering(adj_list)
     # delete start node and everything before it
     ordering = ordering[ordering.index(start_node)+1:]
@@ -33,7 +35,7 @@ def longest_path_in_dag(start_node, end_node, adj_list, weights):
     # backtrack = {node: None for node in ordering}
     backtrack = {}
     # print(backtrack)
-    print(len(ordering))
+    # print(len(ordering))
     for node in ordering:
         # Sb = max[all predessesors a of b(Sa + weight from a to b)
         s_a = {k[0]: v for k, v in weights.items() if k[1] == node}
@@ -41,11 +43,12 @@ def longest_path_in_dag(start_node, end_node, adj_list, weights):
         # print(s_a)
         backtrack[node], s[node] = max(s_a.items(), key=lambda k: k[1])
 
-    # print(backtrack)
+    if is_local:
+        end_node = max(s.items(), key=operator.itemgetter(1))[0]
+
     path = [end_node]
     while path[0] != start_node:
         path = [backtrack[path[0]]] + path
-
     return s[end_node], path
 
 
