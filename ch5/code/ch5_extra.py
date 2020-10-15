@@ -4,7 +4,6 @@ format graph using the score format
 """
 from ch5.code.ch5_08_2 import longest_path_in_dag
 from ch5.code.ch5_10 import blosum62_matrix, pam250_matrix, local_alignment
-from ch5.code.ch5_11 import fitting_alignment
 
 
 def two_strings_to_weighted_graph(v, w,
@@ -245,8 +244,8 @@ def overlap_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mi
                 start = True
     # print(start)
     v = v[cut:]
-    # v = v[:sink[0]]
-    # w = w[:len(v)]
+    # w = w[:sink[0]]
+    w = w[:len(v)]
     return cost, v, w
 
 
