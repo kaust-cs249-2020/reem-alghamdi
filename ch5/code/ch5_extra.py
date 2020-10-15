@@ -23,7 +23,7 @@ def two_strings_to_weighted_graph(v, w,
             nodes[(j, i)] = []
             if i == len(v) and j == len(w):
                 sink = (j, i)
-    print(sink)
+    # print(sink)
     # make edges
     for node, edges in nodes.items():
         if (node[0], node[1] + 1) in nodes.keys():
@@ -267,7 +267,7 @@ def alignment_with_affine_gap_penalty_v2(v, w, scoring_matrix=None, sigma=None, 
     adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches, epsilon=epsilon)
     # print("adj_list")
     cost, path = longest_path_in_dag((0, 0), sink, adj_list, weights)
-    print(path)
+    # print(path)
     for index, n in enumerate(path):
         i = n[0]
         j = n[1]
@@ -353,13 +353,14 @@ if __name__ == "__main__":
     # print(overlap_alignment_v2("CAGAGATGGCCG", "ACG", sigma=1, matches=3, mismatches=2))
     # print(overlap_alignment_v2("CTT", "AGCATAAAGCATT", sigma=1, matches=2, mismatches=3))
 
-    print(alignment_with_affine_gap_penalty_v2("PRTEINS", "PRTWPSEIN", scoring_matrix=blosum62_matrix, sigma=11, epsilon=1))
-    print(alignment_with_affine_gap_penalty_v2("GA", "GTTA", matches=1, mismatches=3, sigma=2, epsilon=1))
-    print(alignment_with_affine_gap_penalty_v2("TTT", "TT", matches=1, mismatches=5, sigma=3, epsilon=1))
-    print(alignment_with_affine_gap_penalty_v2("GAT", "AT", matches=1, mismatches=5, sigma=5, epsilon=1))
-    print(alignment_with_affine_gap_penalty_v2("CCAT", "GAT", matches=1, mismatches=5, sigma=2, epsilon=1))
-    print(alignment_with_affine_gap_penalty_v2("CAGGT", "TAC", matches=1, mismatches=2, sigma=3, epsilon=2))
-    print(alignment_with_affine_gap_penalty_v2("GTTCCAGGTA", "CAGTAGTCGT", matches=2, mismatches=3, sigma=3, epsilon=2))
-    print(alignment_with_affine_gap_penalty_v2("AGCTAGCCTAG", "GT", matches=1, mismatches=3, sigma=1, epsilon=1))
-    print(alignment_with_affine_gap_penalty_v2("AA", "CAGTGTCAGTA", matches=2, mismatches=1, sigma=2, epsilon=1))
-    print(alignment_with_affine_gap_penalty_v2("ACGTA", "ACT", matches=5, mismatches=2, sigma=15, epsilon=5))
+    # print(alignment_with_affine_gap_penalty_v2("PRTEINS", "PRTWPSEIN", scoring_matrix=blosum62_matrix, sigma=11, epsilon=1))
+    # print(alignment_with_affine_gap_penalty_v2("GA", "GTTA", matches=1, mismatches=3, sigma=2, epsilon=1))
+    # print(alignment_with_affine_gap_penalty_v2("TTT", "TT", matches=1, mismatches=5, sigma=3, epsilon=1))
+    # print(alignment_with_affine_gap_penalty_v2("GAT", "AT", matches=1, mismatches=5, sigma=5, epsilon=1))
+    # print(alignment_with_affine_gap_penalty_v2("CCAT", "GAT", matches=1, mismatches=5, sigma=2, epsilon=1))
+    # print(alignment_with_affine_gap_penalty_v2("CAGGT", "TAC", matches=1, mismatches=2, sigma=3, epsilon=2))
+    # print(alignment_with_affine_gap_penalty_v2("GTTCCAGGTA", "CAGTAGTCGT", matches=2, mismatches=3, sigma=3, epsilon=2))
+    # print(alignment_with_affine_gap_penalty_v2("AGCTAGCCTAG", "GT", matches=1, mismatches=3, sigma=1, epsilon=1))
+    # print(alignment_with_affine_gap_penalty_v2("AA", "CAGTGTCAGTA", matches=2, mismatches=1, sigma=2, epsilon=1))
+    # print(alignment_with_affine_gap_penalty_v2("ACGTA", "ACT", matches=5, mismatches=2, sigma=15, epsilon=5))
+    # print(alignment_with_affine_gap_penalty_v2("YHFDVPDCWAHRYWVENPQAIAQMEQICFNWFPSMMMKQPHVFKVDHHMSCRWLPIRGKKCSSCCTRMRVRTVWE", "YHEDVAHEDAIAQMVNTFGFVWQICLNQFPSMMMKIYWIAVLSAHVADRKTWSKHMSCRWLPIISATCARMRVRTVWE", scoring_matrix=blosum62_matrix, sigma=11, epsilon=1))
