@@ -7,7 +7,7 @@ from ch5.code.ch5_10 import blosum62_matrix, pam250_matrix, local_alignment
 
 
 def two_strings_to_weighted_graph(v, w,
-                                  scoring_matrix=None, sigma=None, matches=None, mismatches=None,
+                                  scoring_matrix=None, sigma=None, matches=None, mismatches=None, epsilon=None,
                                   is_local=False, is_fitted=False, is_overlap=False):
     # len_v = len(v)
     # len_w = len(w)
@@ -23,7 +23,7 @@ def two_strings_to_weighted_graph(v, w,
             nodes[(j, i)] = []
             if i == len(v) and j == len(w):
                 sink = (j, i)
-
+    print(sink)
     # make edges
     for node, edges in nodes.items():
         if (node[0], node[1] + 1) in nodes.keys():
@@ -38,6 +38,13 @@ def two_strings_to_weighted_graph(v, w,
                 weight = 0
             weights[(node, (node[0], node[1] + 1))] = weight
 
+            if epsilon:
+                # print(node)
+                for count, k in enumerate(range(1, len(v) - node[1] + 1)):
+                    # print(count, k, (node[0], node[1] + k), weight - count * epsilon)
+                    nodes[node].append((node[0], node[1] + k))
+                    weights[(node, (node[0], node[1] + k))] = weight - count * epsilon
+
         if (node[0] + 1, node[1]) in nodes.keys():
             weight = -1
             if sigma:
@@ -46,6 +53,13 @@ def two_strings_to_weighted_graph(v, w,
             if is_fitted and node[1] == 0:
                 weight = 0
             weights[(node, (node[0] + 1, node[1]))] = weight
+
+            if epsilon:
+                # print(node)
+                for count, k in enumerate(range(1, len(w) - node[0] + 1)):
+                    # print(count, k, (node[0] + k, node[1]), weight - count * epsilon)
+                    nodes[node].append((node[0] + k, node[1]))
+                    weights[(node, (node[0] + k, node[1]))] = weight - count * epsilon
 
         if (node[0] + 1, node[1] + 1) in nodes.keys():
             if scoring_matrix:
@@ -249,6 +263,29 @@ def overlap_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mi
     return cost, v, w
 
 
+def alignment_with_affine_gap_penalty_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mismatches=None, epsilon=None):
+    adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches, epsilon=epsilon)
+    # print("adj_list")
+    cost, path = longest_path_in_dag((0, 0), sink, adj_list, weights)
+    print(path)
+    for index, n in enumerate(path):
+        i = n[0]
+        j = n[1]
+        if index < len(path) - 1:
+            next = path[index + 1]
+            k = next[0]
+            l = next[1]
+            if k > i and l == j:  # if the next is horizontal
+                v = v[:i] + "-" * (k-i) + v[i:]
+
+            elif k == i and l > j:  # if the next is vertical
+                w = w[:j] + "-" * (l - j) + w[j:]
+
+            # elif k == (i + 1) and l == (j + 1): # if the next is diagonal
+
+    return cost, v, w
+
+
 if __name__ == "__main__":
     # print(longest_common_sequence_v2("GACT", "ATG"))
     # print(longest_common_sequence_v2("ACTGAG", "GACTGG"))
@@ -307,11 +344,22 @@ if __name__ == "__main__":
     # print(fitting_alignment_v2("ACGACAGAG", "CGAGAGGTT", sigma=1, matches=2, mismatches=3))
     # print(fitting_alignment_v2("CAAGACTACTATTAG", "GG", sigma=1, matches=10, mismatches=1))
 
-    print(overlap_alignment_v2("PAWHEAE", "HEAGAWGHEE", sigma=2, matches=1, mismatches=2))
-    print(overlap_alignment_v2("GAGA", "GAT", sigma=2, matches=1, mismatches=1))
-    print(overlap_alignment_v2("CCAT", "AT", sigma=1, matches=1, mismatches=1))
-    print(overlap_alignment_v2("GAT", "CAT", sigma=1, matches=1, mismatches=5))
-    print(overlap_alignment_v2("ATCACT", "AT", sigma=1, matches=1, mismatches=5))
-    print(overlap_alignment_v2("ATCACT", "ATG", sigma=5, matches=1, mismatches=5))
-    print(overlap_alignment_v2("CAGAGATGGCCG", "ACG", sigma=1, matches=3, mismatches=2))
-    print(overlap_alignment_v2("CTT", "AGCATAAAGCATT", sigma=1, matches=2, mismatches=3))
+    # print(overlap_alignment_v2("PAWHEAE", "HEAGAWGHEE", sigma=2, matches=1, mismatches=2))
+    # print(overlap_alignment_v2("GAGA", "GAT", sigma=2, matches=1, mismatches=1))
+    # print(overlap_alignment_v2("CCAT", "AT", sigma=1, matches=1, mismatches=1))
+    # print(overlap_alignment_v2("GAT", "CAT", sigma=1, matches=1, mismatches=5))
+    # print(overlap_alignment_v2("ATCACT", "AT", sigma=1, matches=1, mismatches=5))
+    # print(overlap_alignment_v2("ATCACT", "ATG", sigma=5, matches=1, mismatches=5))
+    # print(overlap_alignment_v2("CAGAGATGGCCG", "ACG", sigma=1, matches=3, mismatches=2))
+    # print(overlap_alignment_v2("CTT", "AGCATAAAGCATT", sigma=1, matches=2, mismatches=3))
+
+    print(alignment_with_affine_gap_penalty_v2("PRTEINS", "PRTWPSEIN", scoring_matrix=blosum62_matrix, sigma=11, epsilon=1))
+    print(alignment_with_affine_gap_penalty_v2("GA", "GTTA", matches=1, mismatches=3, sigma=2, epsilon=1))
+    print(alignment_with_affine_gap_penalty_v2("TTT", "TT", matches=1, mismatches=5, sigma=3, epsilon=1))
+    print(alignment_with_affine_gap_penalty_v2("GAT", "AT", matches=1, mismatches=5, sigma=5, epsilon=1))
+    print(alignment_with_affine_gap_penalty_v2("CCAT", "GAT", matches=1, mismatches=5, sigma=2, epsilon=1))
+    print(alignment_with_affine_gap_penalty_v2("CAGGT", "TAC", matches=1, mismatches=2, sigma=3, epsilon=2))
+    print(alignment_with_affine_gap_penalty_v2("GTTCCAGGTA", "CAGTAGTCGT", matches=2, mismatches=3, sigma=3, epsilon=2))
+    print(alignment_with_affine_gap_penalty_v2("AGCTAGCCTAG", "GT", matches=1, mismatches=3, sigma=1, epsilon=1))
+    print(alignment_with_affine_gap_penalty_v2("AA", "CAGTGTCAGTA", matches=2, mismatches=1, sigma=2, epsilon=1))
+    print(alignment_with_affine_gap_penalty_v2("ACGTA", "ACT", matches=5, mismatches=2, sigma=15, epsilon=5))
