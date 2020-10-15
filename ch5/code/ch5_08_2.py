@@ -28,7 +28,7 @@ def longest_path_in_dag(start_node, end_node, adj_list, weights, is_local=False,
     ordering = topological_ordering(adj_list)
     # delete start node and everything before it
     ordering = ordering[ordering.index(start_node)+1:]
-    print(len(ordering))
+    # print(len(ordering))
 
     # set weights to node = -infinity (or any other negative number really)
     # s = {node: -float("inf") for node in {t[0] for t in weights.keys()} or {t[1] for t in weights.keys()}}
@@ -84,17 +84,69 @@ def longest_path_in_dag(start_node, end_node, adj_list, weights, is_local=False,
     if is_overlap or is_local or is_fitting:
         end_node = indices
     path = [end_node]
-    print(path)
+    # print(path)
     while path[0] != start_node:
         path = [backtrack[path[0]]] + path
     return s[end_node], path
 
 
 if __name__ == "__main__":
-    with open("../data/dataset_369316_7.txt") as file:
-        # print(adj_list_string)
-        adj_list, weights = format_weighted_adjacency_list(file.read())
-        print(adj_list, weights)
-        s, path = longest_path_in_dag("0", "49", adj_list, weights)
-        print(s)
-        print('->'.join(path))
+    # with open("../data/dataset_369316_7.txt") as file:
+    #     # print(adj_list_string)
+    #     adj_list, weights = format_weighted_adjacency_list(file.read())
+    #     print(adj_list, weights)
+    #     s, path = longest_path_in_dag("0", "49", adj_list, weights)
+    #     print(s)
+    #     print('->'.join(path))
+
+    adj_list, weights = format_weighted_adjacency_list(
+"""0->1:7
+0->2:4
+2->3:2
+1->4:1
+3->4:3"""
+    )
+    print(longest_path_in_dag("0", "4", adj_list, weights))
+
+    adj_list, weights = format_weighted_adjacency_list(
+        """0->1:1
+0->3:10
+1->2:1
+2->3:1"""
+    )
+    print(longest_path_in_dag("0", "3", adj_list, weights))
+
+    adj_list, weights = format_weighted_adjacency_list(
+        """0->1:2
+0->2:1
+1->3:3
+2->3:3"""
+    )
+    print(longest_path_in_dag("0", "3", adj_list, weights))
+
+    adj_list, weights = format_weighted_adjacency_list(
+        """0->1:1
+0->2:5
+1->3:10
+2->3:1"""
+    )
+    print(longest_path_in_dag("0", "3", adj_list, weights))
+    adj_list, weights = format_weighted_adjacency_list(
+        """1->2:1
+1->3:5
+2->4:10
+3->4:1"""
+    )
+    print(longest_path_in_dag("1", "4", adj_list, weights))
+
+    adj_list, weights = format_weighted_adjacency_list(
+        """1->2:1
+2->3:3
+3->10:1"""
+    )
+    print(longest_path_in_dag("1", "10", adj_list, weights))
+
+    adj_list, weights = format_weighted_adjacency_list(
+        """0->4:7"""
+    )
+    print(longest_path_in_dag("0", "4", adj_list, weights))

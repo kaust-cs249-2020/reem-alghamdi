@@ -28,11 +28,11 @@ def manhattan_tourist(n, m, down, right):
 
 if __name__ == "__main__":
     with open("../data/dataset_369314_10.txt") as file:
-        n = 6
-        m = 4
+        n = 3
+        m = 5
         d = np.zeros((n, m + 1), dtype=int)
         r = np.zeros((n + 1, m), dtype=int)
-        print(np.shape(d), np.shape(r))
+        # print(np.shape(d), np.shape(r))
         data = file.read().split("-")
         for k, matrix in enumerate(data):
             rows = matrix.split("\n")

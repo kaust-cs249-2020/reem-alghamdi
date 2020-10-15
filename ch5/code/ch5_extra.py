@@ -298,8 +298,8 @@ if __name__ == "__main__":
     # w = "ACCCGCACGCGCTTTGGTCTAGATTCTAGCTCCAACTTGCCTGCTAGATACTCTGTTAAAAGATGGTTTTACAACCCCCTCCTCTGTCCCTGGGGTATTATATAATACGTCGGATAGTCAGGTACAAATACAAGTGGGTGGGAATACTTTTCCTCGGATCCTAGACCACGGATTACTGCGTGGTTGACAAGAGTCGGCCCGGAGGGAAACGTGAAGGTTAGTGCAATTAAAGTCTCTAATGTGAAGCCTCCGCGAAGCGAGGAGTTTCTGAGATCGAGTACTATTTAGAGTTCGAAATCACGGCTTAACCTCACTGCCACGCATAACTTGCCGGCAATCCAGTTTTGCAACGATACTTAATTTGTGCAGCTCATCTTTGCTGTCCAGAAATAGAGCTAGTCGATCTCATCTTGCGGGTAGCCAGAAGTCCTACCGTCTCCTCCATGTAGCTTAAAAATTTCGGTGAGGATCAAAAATGATAAACGTGACAGGTAAGCTCCTACGTCTATCCTATGACCCCCGCGGCAGAATAGGTTGGTAGTGTTAGTGCGTGAGCTGGTAGAATAGAGCACACTTAGGGAAACGGGAACCGTTATGTAGGGCTGCGACACACAAAAAAGTGTTCGTTGGTAAGCTGCCTCTCCACTAAACAGGATTTCTCTGGATGATCCCATCGAAGCAAGTTACGCACCACGCCGAGGCGGACCCTGGTACTAGCTGCCCCCCCCTTTATGGGGCGCTCGTACATCAAGATGATCGCGGACTCAACCTGATTACGAGTTGTCCAAGTAGTCCAGGGTAAGAGAAACTGGAGAGA"
     # print(longest_common_sequence_v2(v, w))
 
-    # print(global_alignment_v2("PLEASANTLY", "MEANLY", scoring_matrix=blosum62_matrix, sigma=5))
-    # print(global_alignment_v2("GAGA", "GAT", sigma=2, matches=1, mismatches=1))
+    print(global_alignment_v2("PLEASANTLY", "MEANLY", scoring_matrix=blosum62_matrix, sigma=5))
+    print(global_alignment_v2("GAGA", "GAT", sigma=2, matches=1, mismatches=1))
     # print(global_alignment_v2("ACG", "ACT", sigma=1, matches=1, mismatches=3))
     # print(global_alignment_v2("AT", "AG", sigma=1, matches=1, mismatches=1))
     # print(global_alignment_v2("TCA", "CA", sigma=1, matches=2, mismatches=5))
@@ -353,7 +353,7 @@ if __name__ == "__main__":
     # print(overlap_alignment_v2("CAGAGATGGCCG", "ACG", sigma=1, matches=3, mismatches=2))
     # print(overlap_alignment_v2("CTT", "AGCATAAAGCATT", sigma=1, matches=2, mismatches=3))
 
-    # print(alignment_with_affine_gap_penalty_v2("PRTEINS", "PRTWPSEIN", scoring_matrix=blosum62_matrix, sigma=11, epsilon=1))
+    print(alignment_with_affine_gap_penalty_v2("PRTEINS", "PRTWPSEIN", scoring_matrix=blosum62_matrix, sigma=11, epsilon=1))
     # print(alignment_with_affine_gap_penalty_v2("GA", "GTTA", matches=1, mismatches=3, sigma=2, epsilon=1))
     # print(alignment_with_affine_gap_penalty_v2("TTT", "TT", matches=1, mismatches=5, sigma=3, epsilon=1))
     # print(alignment_with_affine_gap_penalty_v2("GAT", "AT", matches=1, mismatches=5, sigma=5, epsilon=1))
