@@ -50,22 +50,25 @@ def branches(adj_list):
                     else:
                         break
                 paths.append(''.join(non_branching_path))
-        elif degrees[node] == [1, 1]:
-            next_node = lists[0]
-            if adj_list.get(next_node) and node == adj_list[next_node][0]:
-                isolated = [node]
-                while next_node != node:
-                    isolated.append(next_node[-1])
-                    if adj_list.get(next_node):
-                        next_node = adj_list[next_node][0]
-                    else:
-                        break
-                isolated.append(next_node[-1])
-                paths.append(''.join(isolated))
+        # elif degrees[node] == [1, 1]:
+        #     next_node = lists[0]
+        #     if adj_list.get(next_node) and node == adj_list[next_node][0]:
+        #         isolated = [node]
+        #         while next_node != node:
+        #             isolated.append(next_node[-1])
+        #             if adj_list.get(next_node):
+        #                 next_node = adj_list[next_node][0]
+        #             else:
+        #                 break
+        #         isolated.append(next_node[-1])
+        #         paths.append(''.join(isolated))
     return sorted(paths)
 
 
 def graph_degrees(graph):
+    """
+    return pairs, first value is the in-degree, the second is out-degree
+    """
     degrees = {}
     for i in graph.keys():
         ends = graph[i]
@@ -85,7 +88,7 @@ def graph_degrees(graph):
 
 
 if __name__ == "__main__":
-#     print(contig_generation(compositionk("TAATGCCATGGGATGTT", k=3)))
+    print(contig_generation(compositionk("TAATGCCATGGGATGTT", k=3)))
 #     print(*generate_contigs_from_reads("""ATG
 # ATG
 # TGT
@@ -94,8 +97,5 @@ if __name__ == "__main__":
 # GGA
 # GAT
 # AGA""".split()))
-    with open("../data/dataset_369275_5.txt") as file:
-        print(*contig_generation(file.read().splitlines()))
-    # with open("../data/ch3_14") as file:
-    #     for path in branches(format_adjacency_list(file.read())):
-    #         print(" -> ".join(path))
+#     with open("../data/dataset_369275_5.txt") as file:
+#         print(*contig_generation(file.read().splitlines()))

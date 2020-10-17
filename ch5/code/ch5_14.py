@@ -6,10 +6,7 @@ import numpy as np
 
 
 def multiple_longest_common_subsequence(v, w, u, sigma=0, scoring_matrix=None, matches=1, mismatches=0):
-    """
-    given two strings and a score matrix,
-    return the alignment of the strings with max score
-    """
+
     len_v = len(v)
     len_w = len(w)
     len_u = len(u)
