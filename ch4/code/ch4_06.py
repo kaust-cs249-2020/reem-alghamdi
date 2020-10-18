@@ -50,15 +50,16 @@ def cyclopeptide_sequencing(spectrum, amino_list=None):
     final_peptides = []
     final_peptides_masses = []
     while len(candidate_peptides) > 0:
-        candidate_peptides = expand(candidate_peptides)
+        candidate_peptides = expand(candidate_peptides, amino_list=amino_list)
         for peptide in candidate_peptides[:]:
-            if mass(peptide) == parent_mass and peptide not in final_peptides:
-                if cyclic_spectrum(peptide) == spectrum:
+            if mass(peptide, amino_list=amino_list) == parent_mass and peptide not in final_peptides:
+                if cyclic_spectrum(peptide, amino_list=amino_list) == spectrum:
                     final_peptides.append(peptide)
-                    final_peptides_masses.append(peptide_to_masses(peptide, amino_list))
+                    final_peptides_masses.append(peptide_to_masses(peptide, amino_list=amino_list))
                 candidate_peptides.remove(peptide)
-            elif not all(a in spectrum for a in linear_spectrum(peptide)):
+            elif not all(a in spectrum for a in linear_spectrum(peptide, amino_list=amino_list)):
                 candidate_peptides.remove(peptide)
+        print(candidate_peptides)
     return final_peptides_masses
 
 
