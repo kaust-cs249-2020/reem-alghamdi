@@ -13,13 +13,13 @@ def num_subpeptides(n):
     return n * (n-1)
 
 
-def cyclic_spectrum(peptide):
+def cyclic_spectrum(peptide, amino_list=None):
     """
     :param peptide: amino acid string
     :return: the cyclic spectrum of peptide
     """
-    prefix_max = prefix_max_array(peptide)
-    print(prefix_max)
+    prefix_max = prefix_max_array(peptide, amino_list)
+    # print(prefix_max)
     peptide_mass = prefix_max[len(peptide)]
     cyclic_spectrums = [0]
     for i in range(len(peptide)):

@@ -104,11 +104,20 @@ def string_reconstruction(patterns):
     return text
 
 
-def k_universal_string(k):
+def k_universal_string_cyclic(k):
     values = 2 ** k
     patterns = [f'{x:0{k}b}' for x in range(values)]
     adj_list = de_bruijn_graph_fromkmer(patterns)
-    # cycle = euler_cycle(adj_list)[:-(k-1)]  # for exercise question: make it circular
+    cycle = euler_cycle(adj_list)[:-(k-1)]  # for exercise question: make it circular
+    # cycle = euler_cycle(adj_list)  # for extra question: linear
+    text = genome_path(cycle)
+    return text
+
+
+def k_universal_string_linear(k):
+    values = 2 ** k
+    patterns = [f'{x:0{k}b}' for x in range(values)]
+    adj_list = de_bruijn_graph_fromkmer(patterns)
     cycle = euler_cycle(adj_list)  # for extra question: linear
     text = genome_path(cycle)
     return text
@@ -121,4 +130,5 @@ if __name__ == "__main__":
     #     print("->".join(euler_path(format_adjacency_list(file.read()))))
     # with open("../data/dataset_369273_7.txt") as file:
     #     print(string_reconstruction(file.read().splitlines()))
-    print(k_universal_string(3))
+    print(k_universal_string_cyclic(3))
+    print(k_universal_string_linear(5))

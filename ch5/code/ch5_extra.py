@@ -116,7 +116,7 @@ def global_alignment_v2(v, w, scoring_matrix=None, sigma=None, matches=None, mis
     adj_list, weights, sink = two_strings_to_weighted_graph(v, w, scoring_matrix, sigma, matches, mismatches)
     # print("adj_list")
     cost, path = longest_path_in_dag((0, 0), sink, adj_list, weights)
-    print(path)
+    # print(path)
     for index, n in enumerate(path):
         i = n[0]
         j = n[1]

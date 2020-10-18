@@ -8,19 +8,22 @@ integer_mass_table = {'G': 57, 'A': 71, 'S': 87, 'P': 97, 'V': 99,
                       'H': 137, 'F': 147, 'R': 156, 'Y': 163, 'W': 186}
 
 
-def prefix_max_array(peptide):
+def prefix_max_array(peptide, amino_list=None):
+    if amino_list is None:
+        amino_list = integer_mass_table
     prefix_max = [0]
     for i, letter in enumerate(peptide):
-        prefix_max.append(prefix_max[i] + integer_mass_table[letter])
+        prefix_max.append(prefix_max[i] + amino_list[letter])
+    # print(prefix_max)
     return prefix_max
 
 
-def linear_spectrum(peptide):
+def linear_spectrum(peptide, amino_list=None):
     """
     :param peptide: amino acid string
     :return: the linear spectrum of peptide
     """
-    prefix_max = prefix_max_array(peptide)
+    prefix_max = prefix_max_array(peptide, amino_list=amino_list)
     linear_spectrums = [0]
     for i in range(len(peptide)):
         for j in range(i + 1, len(peptide) + 1):

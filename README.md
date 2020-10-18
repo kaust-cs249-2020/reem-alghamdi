@@ -314,6 +314,7 @@
 
     Input: A collection of peptides Leaderboard, a collection of integers Spectrum, and an integer N.
     Output: The N highest-scoring linear peptides on Leaderboard with respect to Spectrum.
+
 # CHAPTER 5: How Do We Compare Biological Sequences?
 
  
