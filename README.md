@@ -1041,28 +1041,100 @@ Example:
         7 -> 6 -> 7
         
 # CHAPTER 4: How Do We Sequence Antibiotics?
+**this chapter is about sequencing peptides**
+
+Let’s begin by considering Tyrocidine B1, one of many antibiotics produced by Bacillus brevis. Tyrocidine B1 is defined by the 10 amino acid-long sequence shown below (using both the one-letter and three-letter notations for amino acids). Our goal in this section is to figure out how Bacillus brevis could have made this antibiotic.
+    
+    Val-Lys-Leu-Phe-Pro-Trp-Phe-Asn-Gln-Tyr
+    V   K   L   F   P   W   F   N   Q   Y
+    
+The Central Dogma of Molecular Biology states that “DNA makes RNA makes protein.” According to the Central Dogma, a gene from a genome is first transcribed into a strand of RNA composed of four ribonucleotides: adenine, guanine, cytosine, and uracil. A strand of RNA can be represented as an RNA string, formed over the four-letter alphabet {A, C, G, U}. Then, the RNA transcript is translated into an amino acid sequence of a protein.
+
+Transcription simply transforms a DNA string into an RNA string by replacing all occurrences of T with U. The resulting strand of RNA is translated into an amino acid sequence as follows. During translation, the RNA strand is partitioned into non-overlapping 3-mers called codons. Then, each codon is converted into one of 20 amino acids via the genetic code; the resulting sequence can be represented as an amino acid string formed over a 20-letter alphabet.     
 ## Section 02
+
 ### Protein Translation
     Protein Translation Problem: Translate an RNA string into an amino acid string.
 
     Input: An RNA string Pattern and the array GeneticCode.
     Output: The translation of Pattern into an amino acid string Peptide.
 
+Example:
+
+    Sample Input:
+    
+        AUGGCCAUGGCGCCCAGAACUGAGAUCAAUAGUACCCGUAUUAACGGGUGA
+    
+    Sample Output:
+    
+        MAMAPRTEINSTRING
+        
 ### Peptide Encoding 
+Thousands of different DNA 30-mers could code for Tyrocidine B1, and we would like to know which one appears in the Bacillus brevis genome. There are three different ways to divide a DNA string into codons for translation, one starting at each of the first three starting positions of the string. These different ways of dividing a DNA string into codons are called reading frames. Since DNA is double-stranded, a genome has six reading frames (three on each strand), as shown in the figure below.
+
+![reading_frames](http://bioinformaticsalgorithms.com/images/Antibiotics/reading_frames.png)
+
+We say that a DNA string Pattern encodes an amino acid string Peptide if the RNA string transcribed from either Pattern or its reverse complement Pattern translates into Peptide. For example, the DNA string GAAACT is transcribed into GAAACU and translated into ET. The reverse complement of this DNA string, AGTTTC, is transcribed into AGUUUC and translated into SF. Thus, GAAACT encodes both ET and SF.
+
     Peptide Encoding Problem: Find substrings of a genome encoding a given amino acid sequence.
 
     Input: A DNA string Text, an amino acid string Peptide, and the array GeneticCode.
     Output: All substrings of Text encoding Peptide (if any such substrings exist).
     
+Example:
+
+    Sample Input:
+    
+        ATGGCCATGGCCCCCAGAACTGAGATCAATAGTACCCGTATTAACGGGTGA
+        MA
+        
+    Sample Output:
+        
+        ATGGCC
+        GGCCAT
+        ATGGCC    
+        
 ## Section 04
+The workhorse of peptide sequencing is the mass spectrometer, an expensive molecular scale that shatters molecules into pieces and then weighs the resulting fragments. The mass spectrometer measures the mass of a molecule in daltons (Da); 1 Da is approximately equal to the mass of a single nuclear particle (i.e., a proton or neutron).
+
+We will approximate the mass of a molecule by simply adding the number of protons and neutrons found in the molecule’s constituent atoms, which yields the molecule’s integer mass. 
+
+ the resulting experimental spectrum contains the masses of all possible linear fragments of the peptide, which are called subpeptides. For example, the cyclic peptide NQEL has 12 subpeptides: N, Q, E, L, NQ, QE, EL, LN, NQE, QEL, ELN, and LNQ. We will also assume that subpeptides may occur more than once if an amino acid occurs multiple times in the peptide (e.g., ELEL also has 12 subpeptides: E, L, E, L, EL, LE, EL, LE, ELE, LEL, ELE, and LEL.
+ 
 ### Count Cyclic Peptides
     Exercise Break: How many subpeptides does a cyclic peptide of length n have?
+    
+Example:
+    
+    Sample Input:
+    
+        31315
+    
+    Sample Output:
+    
+        980597910
+
+
 ### Theoretical Spectrum
+The theoretical spectrum of a cyclic peptide Peptide, denoted Cyclospectrum(Peptide), is the collection of all of the masses of its subpeptides, in addition to the mass 0 and the mass of the entire peptide, with masses ordered from smallest to largest. We will assume that the theoretical spectrum can contain duplicate elements, as is the case for NQEL (shown below), where NQ and EL have the same mass.
+
+![Cyclospectrum](http://bioinformaticsalgorithms.com/images/Antibiotics/duplicate_elements.png)
+
     Generating Theoretical Spectrum Problem: Generate the theoretical spectrum of a cyclic peptide.
 
     Input: An amino acid string Peptide.
     Output: Cyclospectrum(Peptide).
 
+Example:
+
+    Sample Input:
+    
+        LEQN
+    
+    Sample Output:
+    
+        0 113 114 128 129 227 242 242 257 355 356 370 371 484
+        
 ## Section 05
 ### Counting Peptides with Given Mass
     Counting Peptides with Given Mass Problem: Compute the number of peptides of given mass.
@@ -1070,69 +1142,207 @@ Example:
     Input: An integer m.
     Output: The number of linear peptides having integer mass m.
 
+Example:
+
+    Sample Input:
+    
+        1024
+    
+    Sample Output:
+    
+        14712706211
+        
+
 ## Section 06
+
+More generally, brute force algorithms that enumerate all candidate solutions but discard large subsets of hopeless candidates by using various consistency conditions are known as branch-and-bound algorithms. Each such algorithm consists of a branching step to increase the number of candidate solutions, followed by a bounding step to remove hopeless candidates. In our branch-and-bound algorithm for the Cyclopeptide Sequencing Problem, the branching step will extend each candidate peptide of length k into 18 peptides of length k + 1, and the bounding step will remove inconsistent peptides from consideration.
+
 ### Count Linear Peptides
     Exercise Break: How many subpeptides does a linear peptide of given length n have? (Include the empty peptide and the entire peptide.)
+
+Example:
+
+    Sample Input:
+    
+        4
+    
+    Sample Output:
+    
+        11
+
 ### Cyclopeptide Sequencing
+Given an experimental spectrum Spectrum of a cyclic peptide, a linear peptide is consistent with Spectrum if every mass in its theoretical spectrum is contained in Spectrum. If a mass appears more than once in the theoretical spectrum of the linear peptide, then it must appear at least that many times in Spectrum in order for the linear peptide to be consistent with Spectrum. For example, a linear peptide can still be consistent with the theoretical spectrum of NQEL if the peptide’s spectrum contains 242 twice. But it cannot be consistent with the theoretical spectrum of NQEL if its spectrum contains 113 twice.
+
     Cyclopeptide Sequencing Problem: Given an ideal spectrum, find a cyclic peptide whose theoretical spectrum matches the experimental spectrum.
 
     Input: A collection of (possibly repeated) integers Spectrum corresponding to an ideal spectrum.
     Output: An amino acid string Peptide such that Cyclospectrum(Peptide) = Spectrum (if such a string exists).
 
+Example:
+
+    Sample Input:
+    
+        0 113 128 186 241 299 314 427
+    
+    Sample Output:
+    
+        186-128-113 186-113-128 128-186-113 128-113-186 113-186-128 113-128-186
 
 ## Section 07
+Although CyclopeptideSequencing successfully reconstructed Tyrocidine B1, this algorithm only works in the case of an ideal spectrum, i.e., when the experimental spectrum of a peptide coincides exactly with its theoretical spectrum. This inflexibility of CyclopeptideSequencing presents a practical barrier, since mass spectrometers generate "noisy" spectra that are far from ideal — they are characterized by having both false masses and missing masses. A false mass is present in the experimental spectrum but absent from the theoretical spectrum; a missing mass is present in the theoretical spectrum but absent from the experimental spectrum.
+
 ### Cyclopeptide Scoring
+To generalize the Cyclopeptide Sequencing Problem to handle noisy spectra, we need to relax the requirement that a candidate peptide’s theoretical spectrum must match the experimental spectrum exactly, and instead incorporate a scoring function that will select the peptide whose theoretical spectrum matches the given experimental spectrum the most closely. Given a cyclic peptide Peptide and a spectrum Spectrum, we define Score(Peptide, Spectrum) as the number of masses shared between Cyclospectrum(Peptide) and Spectrum. The scoring function should take into account the multiplicities of shared masses, i.e., how many times they occur in each spectrum. For example, suppose that Spectrum is the theoretical spectrum of NQEL; for this spectrum, mass 242 has multiplicity 2. If 242 has multiplicity 1 in the experimental spectrum of Peptide, then 242 contributes 1 to Score(Peptide, Spectrum). If 242 has multiplicity 2 or more in the experimental spectrum of Peptide, then 242 contributes 2 to Score(Peptide, Spectrum)
+    
     Cyclopeptide Scoring Problem: Compute the score of a cyclic peptide against a spectrum.
 
     Input: An amino acid string Peptide and a collection of integers Spectrum.
     Output: The score of Peptide against Spectrum, Score(Peptide, Spectrum).
 
+Example:
+
+    Sample Input:
+    
+        NQEL
+        0 99 113 114 128 227 257 299 355 356 370 371 484
+    
+    Sample Output:
+    
+        11
+        
 ###  Leaderboard Cyclopeptide Sequencing
     Cyclopeptide Sequencing Problem (for spectra with errors): Find a cyclic peptide having maximum score against an experimental spectrum.
 
     Input: A collection of integers Spectrum.
     Output: A cyclic peptide Peptide maximizing Score(Peptide, Spectrum) over all peptides Peptide with mass equal to ParentMass(Spectrum).
 
+Example:
+    
+    Sample Input:
+    
+        10
+        0 71 113 129 147 200 218 260 313 331 347 389 460
+    
+    Sample Output:
+    
+        113-147-71-129
 
 ## Section 09
+When we apply LeaderboardCyclopeptideSequencing for the extended alphabet to Spectrum10, one of the highest-scoring peptides is VKLFPWFNQXZ, where X has mass 98 and Z has mass 65. Apparently, non-standard amino acids successfully competed with standard amino acids for the limited number of positions on the leaderboard, resulting in VKLFPWFNQXZ winning over the correct peptide VKLFPWFNQY. Since LeaderboardCyclopeptideSequencing fails to identify the correct peptide even with only 10% false and missing masses, our stated aim from the previous section is now even more important. We must determine the amino acid composition of a peptide from its spectrum so that we may run LeaderboardCyclopeptideSequencing on this smaller alphabet of amino acids.
+
+We define the convolution of a spectrum by taking all positive differences of masses in the spectrum.
+
 ### Spectral Convolution 
     Spectral Convolution Problem: Compute the convolution of a spectrum.
 
     Input: A collection of integers Spectrum.
     Output: The list of elements in the convolution of Spectrum. If an element has multiplicity k, it should appear exactly k times; you may return the elements in any order.
+
+Example:
+
+    Sample Input:
+    
+        0 137 186 323
+    
+    Sample Output:
+    
+        137 137 186 186 323 49
+
 ### ConvolutionCyclopeptideSequencing
     Code Challenge: Implement ConvolutionCyclopeptideSequencing.
 
     Input: An integer M, an integer N, and a collection of (possibly repeated) integers Spectrum.
     Output: A cyclic peptide LeaderPeptide with amino acids taken only from the top M elements (and ties) of the convolution of Spectrum that fall between 57 and 200, and where the size of Leaderboard is restricted to the top N (and ties).
 
+Example:
+    
+    Sample Input:
+    
+        20
+        60
+        57 57 71 99 129 137 170 186 194 208 228 265 285 299 307 323 356 364 394 422 493
+    
+    Sample Output:
+    
+        99-71-137-57-72-57
+        
 ## Section 11
+We can compute an array PrefixMass storing the masses of each prefix of Peptide in increasing order, e.g., for Peptide = NQEL, PrefixMass = (0, 114, 242, 371, 484). Then, the mass of the subpeptide of Peptide beginning at position i + 1 and ending at position j can be computed as PrefixMass(j) − PrefixMass(i). For example, when Peptide = NQEL,
+
+Mass(QE) = PrefixMass(3) − PrefixMass(1) = 371 − 114 = 257.
+
 ### Linear Spectrum
     Code Challenge: Implement LinearSpectrum.
 
     Input: An amino acid string Peptide.
     Output: The linear spectrum of Peptide.
     
+Example:
+
+    Sample Input:
+    
+        NQEL
+    
+    Sample Output:
+    
+        0 113 114 128 129 242 242 257 370 371 484
+        
+        
 ## Section 13
 ### Linear Scoring
     Code Challenge: Compute the score of a linear peptide with respect to a spectrum.
 
     Input: An amino acid string Peptide and a collection of integers Spectrum.
     Output: The linear score of Peptide with respect to Spectrum, LinearScore(Peptide, Spectrum).
+    
+Example:
+
+    Sample Input:
+    
+        NQEL
+        0 99 113 114 128 227 257 299 355 356 370 371 484
+    
+    Sample Output:
+    
+        8
+        
 ### Trim
     Code Challenge: Implement Trim (reproduced below).
 
     Input: A collection of peptides Leaderboard, a collection of integers Spectrum, and an integer N.
     Output: The N highest-scoring linear peptides on Leaderboard with respect to Spectrum.
 
+Example:
+
+    Sample Input:
+    
+        LAST ALST TLLT TQAS
+        0 71 87 101 113 158 184 188 259 271 372
+        2
+        
+    Sample Output:
+    
+        LAST ALST
+        
 ## Section 14
 ### Turnpike 
+If A = (a1 = 0, a2, …, an) is a set of n points on a line segment in increasing order (a1 < a2 < · · · < an), then ∆A denotes the collection of all pairwise differences between points in A. For example, if A = (0, 2, 4, 7,), then
+ΔA=(−7, −5, −4, −3, −2, −2, 0, 0, 0, 0, 2, 2, 3, 4, 5, 7). The turnpike problem asks us to reconstruct A from ∆A.
 
     Turnpike Problem: Given all pairwise distances between points on a line segment, reconstruct the positions of those points.
 
     Input: A collection of integers L.
     Output: A set of integers A such that ∆A = L.
+
+Example:
+
+    Sample Input:
     
+        -10 -8 -7 -6 -5 -4 -3 -3 -2 -2 0 0 0 0 0 2 2 3 3 4 5 6 7 8 10
+    
+    Sample Output:
+    
+        0 2 4 7 10
 # CHAPTER 5: How Do We Compare Biological Sequences?
 
  
