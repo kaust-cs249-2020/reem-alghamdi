@@ -61,6 +61,8 @@ if __name__ == "__main__":
     n and m to give a single sequence of length n + m while preserving the
     order of symbols in both sequences is n+mCm .
     
+    if two sequences are ABC and C, there are in total 4 ways CABC, ACBC, ABCC, ABCC (letters in different sequences are treated as different)
+    
     A process of intercalating a sequence x 1 , . . . , x n by another sequence
     y 1 , . . . , y m can be described as the filling of a row of n + m empty cells with n + m
     symbols x 1 , . . . , x n , y 1 , . . . , y m (one symbol per cell) while keeping the order of
@@ -113,11 +115,14 @@ if __name__ == "__main__":
         
     you expect your viral genome to contain several repeats not exceeding
     a total length of 500 bases. 
-        
+        k = 500
     
     Suggest an approach of sequencing your virus to maximize your chances of correctly 
     assembling the viral genome. 
-    
     Consider the sequencing approach, length of the k-mers, coverage, and choice
     of assembly algorithm. Justify your answer.
+        assembly algorithm: ConvolutionCyclopeptideSequencing
+        length of k-mer: 500
+        n = 1000
+        m = 500
     """

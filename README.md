@@ -1,84 +1,286 @@
 # CHAPTER 1: Where in the Genome Does Replication Begin?
+Genome replication is one of the most important tasks carried out in the cell. Before a cell can divide, it must first replicate its genome so that each of the two daughter cells inherits its own copy. 
+![replication](https://static.wixstatic.com/media/988d7f_7ef43621eed44d0abf39a39c8287d322~mv2.png)
+
+Replication begins in a genomic region called the replication origin (denoted ori) and is carried out by molecular copy machines called DNA polymerases.
+
+**GOAL**: how to find ori?
+
+Research has shown that the region of the bacterial genome encoding ori is typically a few hundred nucleotides long.
+
+
 ## Section 02
 ### PatternCount
+
+We will use the term k-mer to refer to a string of length k and define Count(Text, Pattern) as the number of times that a k-mer Pattern appears as a substring of Text. Following the above example, Count(ACA**ACTAT**GCAT**ACTAT**CGGGA**ACTAT**CCT, ACTAT) = 3. We note that Count(CG**ATATA**TCC**ATA**G, ATA) is equal to 3 (not 2) since we should account for overlapping occurrences of Pattern in Text.
+
     Code Challenge: Implement PatternCount (reproduced below).
     Input: Strings Text and Pattern.
     Output: Count(Text, Pattern).
 
+Example: 
 
+    Sample Input:
+    
+        GCGCG
+        GCG
+        
+    Sample Output:
+    
+        2
+    
+    
 ### Frequent Words 
+
+We say that Pattern is a most frequent k-mer in Text if it maximizes Count(Text, Pattern) among all k-mers. You can see that ACTAT is a most frequent 5-mer of ACA**ACTAT**GCAT**ACTAT**CGGGA**ACTAT**CCT, and ATA is a most frequent 3-mer of CG**ATATA**TCC**ATA**G.
+    
     Frequent Words Problem: Find the most frequent k-mers in a string.
 
     Input: A string Text and an integer k.
     Output: All most frequent k-mers in Text.
-
+Example: 
+    
+    Sample Input:
+    
+        ACGTTGCATGTCGCATGATGCATGAGAGCT
+        4
+    
+    Sample Output:
+    
+        CATG GCAT
 
 ## Section 03
 ###  Reverse Complement
+Given a nucleotide p, we denote its complementary nucleotide as p*. The reverse complement of a string Pattern = p1 … pn is the string Pattern_rc = pn* … p1* formed by taking the complement of each nucleotide in Pattern, then reversing the resulting string. 
+
     Reverse Complement Problem: Find the reverse complement of a DNA string.
 
     Input: A DNA string Pattern.
-    Output: Patternrc , the reverse complement of Pattern.
+    Output: Pattern_rc , the reverse complement of Pattern.
 
+Example:
+
+    Sample Input:
+    
+        AAAACCCGGT
+    
+    Sample Output:
+    
+        ACCGGGTTTT
+ 
 ### Pattern Matching
     Pattern Matching Problem: Find all occurrences of a pattern in a string.
 
     Input: Strings Pattern and Genome.
     Output: All starting positions in Genome where Pattern appears as a substring.
 
+Example:
+
+    Sample Input:
+    
+        ATAT
+        GATATATGCATATACTT
+        
+    Sample Output:
+    
+        1 3 9
+        
+        
 ## Section 04
 ### Clump Finding
+
+instead of finding clumps of a specific k-mer, let’s try to find every k-mer that forms a clump in the genome. Hopefully, the locations of these clumps will shed light on the location of ori. Our plan is to slide a window of fixed length L along the genome, looking for a region where a k-mer appears several times in short succession. The parameter value L = 500 reflects the typical length of ori in bacterial genomes. We defined a k-mer as a "clump" if it appears many times within a short interval of the genome. More formally, given integers L and t, a k-mer Pattern forms an (L, t)-clump inside a (longer) string Genome if there is an interval of Genome of length L in which this k-mer appears at least t times. (This definition assumes that the k-mer completely fits within the interval. This also does not take reverse complements into account yet.) 
+For example, TGCA forms a (25,3)-clump in the following Genome:
+gatcagcataagggtccC**TGCA**A**TGCA**TGACAAGCC**TGCA**GTtgttttac
+
     Clump Finding Problem: Find patterns forming clumps in a string.
 
     Input: A string Genome, and integers k, L, and t.
     Output: All distinct k-mers forming (L, t)-clumps in Genome.
 
+Example:
+
+    Sample Input:
+    
+        CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA
+        5 50 4
+    
+    Sample Output:
+    
+        CGACA GAAGA
+        
 ## Section 07
+We are now ready to discuss the replication process in more detail. As illustrated in the figure below, the two complementary DNA strands running in opposite directions around a circular chromosome unravel, starting at ori. As the strands unwind, they create two replication forks, which expand in both directions around the chromosome until the strands completely separate at the replication terminus (denoted ter). The replication terminus is located roughly opposite to ori in the chromosome.
+
+![replication1](http://bioinformaticsalgorithms.com/images/Replication/naive_replication.png)
+
+When all four DNA polymerases have reached ter, the chromosome's DNA will have been completely replicated, resulting in two pairs of complementary strands shown in the lower figure, and the cell is ready to divide.
+![replication2](http://bioinformaticsalgorithms.com/images/Replication/naive_replication_complete.png)
+
+The problem with our current description is that it assumes that DNA polymerases can copy DNA in either direction along a strand of DNA (i.e., both 5’ → 3’ and 3’ → 5’). However, nature has not yet equipped DNA polymerases with this ability, as they are unidirectional, meaning that they can only traverse a template strand of DNA in the 3' → 5' direction, which is opposite from the 5’ → 3’ direction of DNA.
+
+The unidirectionality of DNA polymerase requires a major revision to our naive model of replication. Imagine that you decided to walk along DNA from ori to ter. There are four different half-strands of parent DNA connecting ori to ter, as highlighted in the figure below. Two of these half-strands are traversed from ori to ter in the 5’ → 3’ direction and are thus called forward half-strands (represented by thin blue and green lines in the figure below). The other two half-strands are traversed from ori to ter in the 3’ → 5’ direction and are thus called reverse half-strands (represented by thick blue and green lines in the figure below).
+![replication3](http://bioinformaticsalgorithms.com/images/Replication/half_strands.png)
+Biologists call a reverse half-strand (thick lines) a leading half-strand since a single DNA polymerase traverses this half-strand non-stop, and they call a forward half-strand (thin lines) a lagging half-strand since it is used as a template by many DNA polymerases stopping and starting replication.
+
+our idea is to traverse the genome, keeping a running total of the difference between the counts of G and C. If this difference starts increasing, then we guess that we are on the forward half-strand; on the other hand, if this difference starts decreasing, then the we guess that we are on the reverse half-strand
+![replication4](http://bioinformaticsalgorithms.com/images/Replication/increasing_decreasing_skew.png)
+
+Since we don't know the location of ori in a circular genome, let's linearize it (i.e., select an arbitrary position and pretend that the genome begins here), resulting in a linear string Genome. We define Skewi(Genome) as the difference between the total number of occurrences of G and the total number of occurrences of C in the first i nucleotides of Genome. The skew diagram is defined by plotting Skewi (Genome) (as i ranges from 0 to |Genome|), where Skew0 (Genome) is set equal to zero. The figure below shows a skew diagram for the DNA string CATGGGCATCGGCCATACGCC.
+Note that we can compute Skewi+1(Genome) from Skewi(Genome) according to the nucleotide in position i of Genome. If this nucleotide is G, then Skewi+1(Genome) = Skewi(Genome) + 1; if this nucleotide is C, then Skewi+1(Genome)= Skewi(Genome) – 1; otherwise, Skewi+1(Genome) = Skewi(Genome).
+
+
+**Exercise Break**: Give all values of Skewi (GAGCCACCGCGATA) for i ranging from 0 to 14.
+![skew](http://bioinformaticsalgorithms.com/images/Replication/skew_diagram_basic.png)
+
+**Sample Input:**
+
+     CATGGGCATCGGCCATACGCC
+
+**Sample Output:**
+
+     0 -1 -1 -1 0 1 2 1 1 1 0 1 2 1 0 0 0 0 -1 0 -1 -2
+
+
+
 ### Minimum Skew
+Let's follow the 5' → 3' direction of DNA and walk along the chromosome from ter to ori (along a reverse half-strand), then continue on from ori to ter (along a forward half-strand). In our previous discussion, we saw that the skew is decreasing along the reverse half-strand and increasing along the forward half-strand. Thus, the skew should achieve a minimum at the position where the reverse half-strand ends and the forward half-strand begins, which is exactly the location of ori!
+
     Minimum Skew Problem: Find a position in a genome where the skew diagram attains a minimum.
 
     Input: A DNA string Genome.
     Output: All integer(s) i minimizing Skewi (Genome) among all values of i (from 0 to |Genome|).
 
+Example:
+    
+    Sample Input:
+    
+        TAAAGACTGCCGAGAGGCCAACACGAGTGCTAGAACGAGGGGCGTAAACGCGGGTCCGAT
+    
+    Sample Output:
+    
+        11 24
+        
 ## Section 08
 ### Hamming Distance
+We say that position i in k-mers p1 … pk and q1 … qk is a mismatch if pi ≠ qi. For example, CGAAT and CGGAC have two mismatches. The number of mismatches between strings p and q is called the Hamming distance between these strings and is denoted HammingDistance(p, q).
+
     Hamming Distance Problem: Compute the Hamming distance between two strings.
 
     Input: Two strings of equal length.
     Output: The Hamming distance between these strings.
 
+Example:
+
+    Sample Input:
+    
+        GGGCCGTTGGT
+        GGACCGTTGAC
+    
+    Sample Output:
+    
+        3
+        
 ### Approximate Pattern Matching
+We say that a k-mer Pattern appears as a substring of Text with at most d mismatches if there is some k-mer substring Pattern' of Text having d or fewer mismatches with Pattern, i.e., HammingDistance(Pattern, Pattern') ≤ d. Our observation that a DnaA box may appear with slight variations leads to the following generalization of the Pattern Matching Problem.
+
     Approximate Pattern Matching Problem: Find all approximate occurrences of a pattern in a string.
 
     Input: Strings Pattern and Text along with an integer d.
     Output: All starting positions where Pattern appears as a substring of Text with at most d mismatches.
 
+Example:
+
+    Sample Input:
+    
+        ATTCTGGA
+        CGCCCGAATCCAGAACGCATTCCCATATTTCGGGACCACTGGCCTCCACGGTACGGACGTCAATCAAAT
+        3
+    
+    Sample Output:
+    
+        6 7 26 27
+
 ### ApproximatePatternCount
+
+Given strings Text and Pattern as well as an integer d, we define Count_d(Text, Pattern) as the total number of occurrences of Pattern in Text with at most d mismatches. For example, Count_1(**AACAA**GCTG**ATAAACA**TTT**AAAGA**G, AAAAA) = 4 because AAAAA appears four times in this string with at most one mismatch: AACAA, ATAAA, AAACA, and AAAGA. Note that two of these occurrences overlap.
+
     Code Challenge: Implement ApproximatePatternCount.
 
     Input: Strings Pattern and Text as well as an integer d.
-    Output: Countd(Text, Pattern).
+    Output: Count_d(Text, Pattern).
 
+Example:
+
+    Sample Input:
+    
+        GAGG
+        TTTAGAGCCTTCAGAGG
+        2
+    
+    Sample Output:
+    
+        4
+        
 ### Frequent Words with Mismatches
+A most frequent k-mer with up to d mismatches in Text is simply a string Pattern maximizing Count_d(Text, Pattern) among all k-mers. Note that Pattern does not need to actually appear as a substring of Text; for example, as we already saw, AAAAA is the most frequent 5-mer with 1 mismatch in AACAAGCTGATAAACATTTAAAGAG, even though it does not appear exactly in this string.
+
     Frequent Words with Mismatches Problem: Find the most frequent k-mers with mismatches in a string.
 
     Input: A string Text as well as integers k and d.
     Output: All most frequent k-mers with up to d mismatches in Text.
 
+Example:
+
+    Sample Input:
+    
+        ACGTTGCATGTCGCATGATGCATGAGAGCT
+        4 1
+    
+    Sample Output:
+    
+        ATGC ATGT GATG
+  
 ### Frequent Words with Mismatches and Reverse Complements
+We now redefine the Frequent Words Problem to account for both mismatches and reverse complements. Recall that Pattern_rc refers to the reverse complement of Pattern.
+
     Frequent Words with Mismatches and Reverse Complements Problem: Find the most frequent k-mers (with mismatches and reverse complements) in a string.
 
     Input: A DNA string Text as well as integers k and d.
-    Output: All k-mers Pattern maximizing the sum Countd(Text, Pattern)+ Countd(Text, Patternrc) over all possible k-mers.
+    Output: All k-mers Pattern maximizing the sum Count_d(Text, Pattern)+ Count_d(Text, Pattern_rc) over all possible k-mers.
+
+Example:
+
+    Sample Input:
+    
+        ACGTTGCATGTCGCATGATGCATGAGAGCT
+        4 1
+    
+    Sample Output:
+    
+        ATGT ACAT
 
 
 ## Section 11
 ### Neighbors
+Our goal is to generate the d-neighborhood Neighbors(Pattern, d), the set of all k-mers whose Hamming distance from Pattern does not exceed d.
+
     Code Challenge: Implement Neighbors to find the d-neighborhood of a string.
 
     Input: A string Pattern and an integer d.
     Output: The collection of strings Neighbors(Pattern, d).
 
+Example:
+
+    Sample Input:
+    
+        ACG
+        1
+    
+    Sample Output:
+    
+        CCG TCG GCG AAG ATG AGG ACA ACC ACT ACG
+        
 # CHAPTER 2: Which DNA Patterns Play the Role of Molecular Clocks?
 ## Section 02
 ### MotifEnumeration
