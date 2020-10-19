@@ -315,6 +315,14 @@
     Input: A collection of peptides Leaderboard, a collection of integers Spectrum, and an integer N.
     Output: The N highest-scoring linear peptides on Leaderboard with respect to Spectrum.
 
+## Section 14
+### Turnpike 
+
+    Turnpike Problem: Given all pairwise distances between points on a line segment, reconstruct the positions of those points.
+
+    Input: A collection of integers L.
+    Output: A set of integers A such that ∆A = L.
+    
 # CHAPTER 5: How Do We Compare Biological Sequences?
 
  
