@@ -1347,6 +1347,7 @@ Example:
         0 2 4 7 10
 # CHAPTER 5: How Do We Compare Biological Sequences?
 **Given two(or more) sequences, how can we compare them?**
+
  We now define an alignment of sequences v and w as a two-row matrix such that the first row contains the symbols of v (in order), the second row contains the symbols of w (in order), and space symbols (called gap symbols and shown as dashes below) may be interspersed throughout both strings, as long as two space symbols are not aligned against each other. Here is the alignment of ATGTTATA and ATCGTCC from the figure on the previous step.
 
     A T - G T T A T A

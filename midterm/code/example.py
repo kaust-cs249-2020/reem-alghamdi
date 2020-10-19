@@ -107,22 +107,33 @@ if __name__ == "__main__":
     of assembly algorithm. Justify your answer.
     
     You plan to sequence a single-stranded RNA virus; 
+    ch3
+    
     you expect your virus genome to be of a length between 25,000 and 30,000. 
-        ANS: length is large. Brute forcing won't work
     
     Your sequencing technology will introduce on average one error every 20 bases. 
-        ANS: Cyclopeptide Sequencing won't work, because it assumes no errors
+        This read breaking approach, in which we break reads into shorter k-mers, is used by many modern assemblers.
+        Even after read breaking, most assemblies still have gaps in k-mer coverage, causing the de Bruijn graph to have missing edges, and so the search for an Eulerian path fails. In this case, biologists often settle on assembling contigs (long, contiguous segments of the genome) rather than entire chromosomes
         
-    you expect your viral genome to contain several repeats not exceeding
-    a total length of 500 bases. 
-        k = 500
+        his structure is called a bubble, which we define as two short disjoint paths (e.g., shorter than some threshold length) connecting the same pair of nodes in the de Bruijn graph.
+
+        Existing assemblers remove bubbles from de Bruijn graphs. The practical challenge is that, since nearly all reads have errors, de Bruijn graphs have millions of bubbles (see below).
+        
+        Bubble removal occasionally removes the correct path, thus introducing errors rather than fixing them. To make matters worse, in a genome having inexact repeats, where the repeated regions differ by a single nucleotide or some other small variation, reads from the two repeat copies will also generate bubbles in the de Bruijn graph because one of the copies may appear to be an erroneous version of the other. Applying bubble removal to these regions introduces assembly errors by making repeats appear more similar than they are. Thus, modern genome assemblers attempt to distinguish bubbles caused by sequencing errors (which should be removed) from bubbles caused by variations (which should be retained).
+
+    you expect your viral genome to contain several repeats not exceeding a total length of 500 bases. 
+        As soon as read length exceeds the length of all repeats in a genome (provided the reads have no errors), the de Bruijn graph turns into a path.
+
+        can think about a read-pair as a long “gapped" read of length k + d + k whose first and last k-mers are known but whose middle segment of length d is unknown. Nevertheless, read-pairs contain more information than k-mers alone, and so we should be able to use them to improve our assemblies. If only you could infer the nucleotides in the middle segment of a read-pair, you would immediately increase the read length from k to 2 · k + d.
+
     
     Suggest an approach of sequencing your virus to maximize your chances of correctly 
     assembling the viral genome. 
     Consider the sequencing approach, length of the k-mers, coverage, and choice
     of assembly algorithm. Justify your answer.
-        assembly algorithm: ConvolutionCyclopeptideSequencing
-        length of k-mer: 500
-        n = 1000
-        m = 500
+    
+        sequencing approach:
+        length of k-mer: 
+        coverage:
+        assembly algorithm: 
     """
