@@ -19,6 +19,7 @@ Research has shown that the region of the bacterial genome encoding ori is typic
 We will use the term k-mer to refer to a string of length k and define Count(Text, Pattern) as the number of times that a k-mer Pattern appears as a substring of Text. Following the above example, Count(ACA**ACTAT**GCAT**ACTAT**CGGGA**ACTAT**CCT, ACTAT) = 3. We note that Count(CG**ATATA**TCC**ATA**G, ATA) is equal to 3 (not 2) since we should account for overlapping occurrences of Pattern in Text.
 
     Code Challenge: Implement PatternCount (reproduced below).
+    
     Input: Strings Text and Pattern.
     Output: Count(Text, Pattern).
 
@@ -426,6 +427,7 @@ The entropy of the completely conserved third column is 0, which is the minimum 
 
     This function takes a matrix of motifs, and compute information
     Note: give an array of strings, each string is the COLUMN of the matrix NOT row!(fix later)
+    
     Input: A collection of strings Dna
     Output: consensus, score, count, profile, entropy, entropies 
  
@@ -1344,8 +1346,14 @@ Example:
     
         0 2 4 7 10
 # CHAPTER 5: How Do We Compare Biological Sequences?
+**Given two(or more) sequences, how can we compare them?**
+ We now define an alignment of sequences v and w as a two-row matrix such that the first row contains the symbols of v (in order), the second row contains the symbols of w (in order), and space symbols (called gap symbols and shown as dashes below) may be interspersed throughout both strings, as long as two space symbols are not aligned against each other. Here is the alignment of ATGTTATA and ATCGTCC from the figure on the previous step.
 
- 
+    A T - G T T A T A
+    A T C G T - C - C
+
+An alignment presents one possible scenario by which v could have evolved into w. Columns containing the same letter in both rows are called matches and represent conserved nucleotides, whereas columns containing different letters are called mismatches and represent single-nucleotide substitutions. Columns containing a space symbol are called indels: a column containing a space symbol in the top row of the alignment is called an insertion, as it implies the insertion of a symbol when transforming v into w; a column containing a space symbol in the bottom row of the alignment is called a deletion, as it indicates the deletion of a symbol when transforming v into w. The alignment above has four matches, two mismatches, one insertion, and two deletions.
+The matches in an alignment of two strings define a common subsequence of the two strings, or a sequence of symbols appearing in the same order (although not necessarily consecutively) in both strings. For example, the alignment above indicates that ATGT is a common subsequence of ATGTTATA and ATCGTCC. An alignment of two strings maximizing the number of matches therefore corresponds to a longest common subsequence (LCS) of these strings. Note that two strings may have more than one longest common subsequence.
 ## Section 05
 ## DPChange
     Change Problem: Find the minimum number of coins needed to make change.
@@ -1353,7 +1361,17 @@ Example:
     Input: An integer money and an array Coins of d positive integers.
     Output: The minimum number of coins with denominations Coins that changes money.
 
-passed all tests
+Example:
+
+    Sample Input:
+    
+        40
+        50,25,20,10,5,1
+    
+    Sample Output:
+    
+        2
+        
 ## Section 06
 ### Find the length of a longest path in the Manhattan Tourist Problem.
     Manhattan Tourist Problem: Find a longest path in a rectangular city.
@@ -1361,15 +1379,44 @@ passed all tests
     Input: A weighted n × m rectangular grid with n + 1 rows and m + 1 columns.
     Output: A longest path from source (0,0) to sink (n, m) in the grid.
     
-passed all tests
+Example:
 
+    Sample Input:
+        
+        4 4
+        1 0 2 4 3
+        4 6 5 2 1
+        4 4 5 2 1
+        5 6 8 5 3
+        -
+        3 2 4 0
+        3 2 4 2
+        0 7 3 3
+        3 3 0 2
+        1 3 2 2
+    
+    Sample Output:
+    
+        34
+        
 ## Section 08
 ### Longest Common Subsequence Problem
     Longest Common Subsequence Problem: Find a longest common subsequence of two strings.
 
     Input: Two strings.
     Output: A longest common subsequence of these strings.
-passed all tests
+
+Example:
+
+    Sample Input:
+    
+        AACCTTGG
+        ACACTGTGA
+    
+    Sample Output:
+    
+        AACTGG
+
 
 ### Longest Path in a DAG 
     Longest Path in a Directed Graph Problem: Find a longest path between two nodes in an edge-weighted directed graph.
@@ -1377,53 +1424,170 @@ passed all tests
     Input: An edge-weighted directed graph with source and sink nodes.
     Output: A longest path from source to sink in the directed graph.
    
-passed all tests 
+Example:
 
+    Sample Input:
+    
+        0
+        4
+        0->1:7
+        0->2:4
+        2->3:2
+        1->4:1
+        3->4:3
+    
+    Sample Output:
+    
+        9
+        0->2->3->4
+        
 ## Section 10
 ### Global Alignment
+**mach ALL v to ALL w**
+
+The graph:
+
+![global](http://bioinformaticsalgorithms.com/images/Alignment/colored_alignment_graph.png)
+
+
     Global Alignment Problem: Find a highest-scoring alignment of two strings as defined by a scoring matrix.
 
     Input: Two strings and a scoring matrix Score.
     Output: An alignment of the strings whose alignment score (as defined by Score) is maximized over all alignments of the strings.
-passed all tests  
+
+Example:
+
+    Sample Input:
+    
+        PLEASANTLY
+        MEANLY
+    
+    Sample Output:
+    
+        8
+        PLEASANTLY
+        -MEA--N-LY
+    
 
 ###  Local Alignment 
+**mach SUBSET of v to SUBSET of w**
+The graph:
+
+![local](http://bioinformaticsalgorithms.com/images/Alignment/zero_weight_edges.png)
+
+
     Local Alignment Problem: Find the highest-scoring local alignment between two strings.
 
     Input: Strings v and w as well as a matrix score.
     Output: Substrings of v and w whose global alignment score (as defined by score) is maximized among all substrings of v and w.
-passed all tests  
+
+Example:
+
+    Sample Input:
+    
+        MEANLY
+        PENALTY
+    
+    Sample Output:
+    
+        15
+        EANL-Y
+        ENALTY
 
 ## Section 11
 ### Edit Distance
+The edit distance between two strings as the minimum number of edit operations needed to transform one string into another.
+
+
     Edit Distance Problem: Find the edit distance between two strings.
 
     Input: Two strings.
     Output: The edit distance between these strings.
-passed all tests  
 
+Example:
+
+    Sample Input:
+    
+        PLEASANTLY
+        MEANLY
+    
+    Sample Output:
+    
+        5
+        
 ### Fitting Alignment
+Global alignment will not work because it tries to align all of v to all of w; local alignment will not work because it tries to align substrings of both v and w. Thus, we have a distinct alignment application called the Fitting Alignment Problem.
+
+“Fitting” w to v requires finding a substring v′ of v that maximizes the global alignment score between v′ and w among all substrings of v.
+
+**match SUBSET of v to ALL OF of w**
+
+![comp_alignment](http://bioinformaticsalgorithms.com/images/Alignment/global_local_fitting.png)
+
+
     Fitting Alignment Problem: Construct a highest-scoring fitting alignment between two strings.
 
     Input: Strings v and w as well as a matrix Score.
     Output: A highest-scoring fitting alignment of v and w as defined by the scoring matrix Score.
-passed all tests  
 
+Example:
+
+    Sample Input:
+    
+        GTAGGCTTAAGGTTA
+        TAGATA
+    
+    Sample Output:
+    
+        2
+        TAGGCTTA
+        TAGA--TA
+        
 ### Overlap Alignment
+An overlap alignment of strings v = v1 ... vn and w = w1 ... wm is a global alignment of a suffix of v with a prefix of w. An optimal overlap alignment of strings v and w maximizes the global alignment score between an i-suffix of v and a j-prefix of w (i.e., between vi ... vn and w1 ... wj) among all i and j.
+
+
     Overlap Alignment Problem: Construct a highest-scoring overlap alignment between two strings.
 
     Input: Two strings and a matrix score.
     Output: A highest-scoring overlap alignment between the two strings as defined by the scoring matrix score.
-passed all tests  
 
+Example:
+
+    Sample Input:
+    
+        PAWHEAE
+        HEAGAWGHEE
+    
+    Sample Output:
+    
+        1
+        HEAE
+        HEAG
+        
 ## Section 12
 ### Alignment with Affine Gap Penalties 
+**global alignment, but favour bigger continuous gaps over a lot of mini gaps between matches**
+
+
     Alignment with Affine Gap Penalties Problem: Construct a highest-scoring global alignment between two strings (with affine gap penalties).
 
     Input: Two strings, a matrix score, and numbers σ and ε.
     Output: A highest scoring global alignment between these strings, as defined by the scoring matrix score and by the gap opening and extension penalties σ and ε.
-passed all tests
 
+Example:
+
+    Sample Input:
+    
+        PRTEINS
+        PRTWPSEIN
+    
+    Sample Output:
+    
+        8
+        PRT---EINS
+        PRTWPSEIN-
+        
 ## Section 13
 ### Middle Edge in Linear Space
 
@@ -1431,12 +1595,79 @@ passed all tests
 
     Input: Two strings and a matrix score.
     Output: A middle edge in the alignment graph of these strings (where the edge lengths are defined by score).
-needs more work
+
+Example:
+
+    Sample Input:
+    
+        PLEASANTLY
+        MEASNLY
+    
+    Sample Output:
+    
+        (4, 3) (5, 4)
+
+### LinearSpaceAlignment
+**global alignment, but do it in linear space**
+
+    Code Challenge: Implement LinearSpaceAlignment to solve the Global Alignment Problem for a large dataset.
+
+    Input: Two long (10000 amino acid) protein strings written in the single-letter amino acid alphabet.
+    Output: The maximum alignment score of these strings, followed by an alignment achieving this maximum score. Use the BLOSUM62 scoring matrix and indel penalty σ = 5.
+    
+Example:
+
+    Sample Input:
+    
+        PLEASANTLY
+        MEANLY
+    
+    Sample Output:
+        
+        8
+        PLEASANTLY
+        -MEA--N-LY    
+
 ## Section 14
 ### Multiple Longest Common Subsequence
+**global alignment, but for three subsequences**
+
     Multiple Alignment Problem: Find the highest-scoring alignment between multiple strings under a given scoring matrix.
 
     Input: A collection of t strings and a t-dimensional matrix Score.
     Output: A multiple alignment of these strings whose score (as defined by the matrix Score) is maximized among all possible alignments of these strings.
-passed all tests
 
+Example:
+
+    Sample Input:
+    
+        ATATCCG
+        TCCGA
+        ATGTACTG
+    
+    Sample Output:
+    
+        3
+        ATATCC-G-
+        ---TCC-GA
+        ATGTACTG-
+
+## Section 17
+### TopologicalOrdering
+
+     Code Challenge: Implement TopologicalOrdering.
+     
+     Input: The adjacency list of a graph (with nodes represented by integers).
+     Output: A topological ordering of this graph.
+Example:
+
+    Sample Input:
+    
+        0 -> 1
+        1 -> 2
+        3 -> 1
+        4 -> 2
+    
+    Sample Output:
+    
+        0, 3, 4, 1, 2
