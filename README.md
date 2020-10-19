@@ -4,6 +4,7 @@
 
 
 Genome replication is one of the most important tasks carried out in the cell. Before a cell can divide, it must first replicate its genome so that each of the two daughter cells inherits its own copy. 
+
 ![replication](https://static.wixstatic.com/media/988d7f_7ef43621eed44d0abf39a39c8287d322~mv2.png)
 
 Replication begins in a genomic region called the replication origin (denoted ori) and is carried out by molecular copy machines called DNA polymerases.
@@ -115,18 +116,23 @@ Example:
 ## Section 07
 We are now ready to discuss the replication process in more detail. As illustrated in the figure below, the two complementary DNA strands running in opposite directions around a circular chromosome unravel, starting at ori. As the strands unwind, they create two replication forks, which expand in both directions around the chromosome until the strands completely separate at the replication terminus (denoted ter). The replication terminus is located roughly opposite to ori in the chromosome.
 
+
 ![replication1](http://bioinformaticsalgorithms.com/images/Replication/naive_replication.png)
 
 When all four DNA polymerases have reached ter, the chromosome's DNA will have been completely replicated, resulting in two pairs of complementary strands shown in the lower figure, and the cell is ready to divide.
+
 ![replication2](http://bioinformaticsalgorithms.com/images/Replication/naive_replication_complete.png)
 
 The problem with our current description is that it assumes that DNA polymerases can copy DNA in either direction along a strand of DNA (i.e., both 5’ → 3’ and 3’ → 5’). However, nature has not yet equipped DNA polymerases with this ability, as they are unidirectional, meaning that they can only traverse a template strand of DNA in the 3' → 5' direction, which is opposite from the 5’ → 3’ direction of DNA.
 
 The unidirectionality of DNA polymerase requires a major revision to our naive model of replication. Imagine that you decided to walk along DNA from ori to ter. There are four different half-strands of parent DNA connecting ori to ter, as highlighted in the figure below. Two of these half-strands are traversed from ori to ter in the 5’ → 3’ direction and are thus called forward half-strands (represented by thin blue and green lines in the figure below). The other two half-strands are traversed from ori to ter in the 3’ → 5’ direction and are thus called reverse half-strands (represented by thick blue and green lines in the figure below).
+
 ![replication3](http://bioinformaticsalgorithms.com/images/Replication/half_strands.png)
+
 Biologists call a reverse half-strand (thick lines) a leading half-strand since a single DNA polymerase traverses this half-strand non-stop, and they call a forward half-strand (thin lines) a lagging half-strand since it is used as a template by many DNA polymerases stopping and starting replication.
 
 our idea is to traverse the genome, keeping a running total of the difference between the counts of G and C. If this difference starts increasing, then we guess that we are on the forward half-strand; on the other hand, if this difference starts decreasing, then the we guess that we are on the reverse half-strand
+
 ![replication4](http://bioinformaticsalgorithms.com/images/Replication/increasing_decreasing_skew.png)
 
 
@@ -136,6 +142,7 @@ Note that we can compute Skew_i+1(Genome) from Skew_i(Genome) according to the n
 
 
 **Exercise Break**: Give all values of Skew_i (GAGCCACCGCGATA) for i ranging from 0 to 14.
+
 ![skew](http://bioinformaticsalgorithms.com/images/Replication/skew_diagram_basic.png)
 
 **Sample Input:**
@@ -405,6 +412,7 @@ We can construct the 4 × k count matrix **Count(Motifs) counting the number of 
 
 Finally, we form a consensus string, denoted **Consensus(Motifs), from the most popular letters in each column of the motif matrix.** If we select Motifs correctly from the collection of upstream regions, then Consensus(Motifs) provides an ideal candidate regulatory motif for these regions. For example, the consensus string for the NF-κB binding sites in the figure below is TCGGGGATTTCC.
 
+
 ![motif](http://bioinformaticsalgorithms.com/images/Motifs/motifs_score_count_profile_consensus.png)
 
 Every column of Profile(Motifs) corresponds to a probability distribution, or a collection of nonnegative numbers that sum to 1. For example, the 2nd column in the profile matrix for the NF-κB binding sites corresponds to the probabilities 0.2, 0.6, 0.0, and 0.2 for A, C, G, and T, respectively.
@@ -433,6 +441,7 @@ This equation gives us an idea. Instead of searching for a collection of k-mers 
 nstead of having to search for all Motifs, we now have to search all Motifs as well as all k-mers Pattern. The key observation for solving the Equivalent Motif Finding Problem is that, given Pattern, we don’t need to explore all possible collections Motifs in order to minimize d(Pattern, Motifs).
 
 To explain how this can be done, we define Motifs(Pattern, Dna) as a collection of k-mers that minimizes d(Pattern, Motifs) for a given Pattern and all possible sets of k-mers Motifs in Dna. For example, for the strings Dna shown below, the five colored 3-mers represent Motifs(AAA, Dna).
+
 ![median_String1](http://bioinformaticsalgorithms.com/images/Motifs/median_string_1.png)
 
 
@@ -444,6 +453,7 @@ A k-mer in Text that achieves the minimum Hamming distance with Pattern is denot
 
 Given a k-mer Pattern and a set of strings Dna = {Dna1, … , Dna_t}, we define d(Pattern, Dna) as the sum of distances between Pattern and all strings in Dna,
 d(Pattern,Dna)=∑(i=1, t)d(Pattern,Dnai). For example, for the strings Dna shown below, d(AAA, Dna) = 1 + 1 + 2 + 0 + 1 = 5.
+
 
 ![median_String2](http://bioinformaticsalgorithms.com/images/Motifs/median_string_2.png)
 
@@ -475,6 +485,7 @@ Example:
 In this section, we will explore a greedy approach to motif finding. Again, let Motifs be a collection of k-mers taken from t strings Dna. Recall from our discussion of entropy that we can view each column of Profile(Motifs) as a four-sided biased die. Thus, a profile matrix with k columns can be viewed as a collection of k dice, which we will roll to randomly generate a k-mer. For example, if the first column of the profile matrix is (0.2, 0.1, 0.0, 0.7), then we generate A as the first nucleotide with probability 0.2, C with probability 0.1, G with probability 0.0, and T with probability 0.7.
 
 Below, we reproduce the profile matrix for the NF-κB binding sites, where the lone colored entry in the i-th column corresponds to the i-th nucleotide in ACGGGGATTACC. The probability Pr(ACGGGGATTACC | Profile) that Profile generates ACGGGGATTACC is computed by simply multiplying the highlighted entries in the profile matrix.
+
 ![profile_most](http://bioinformaticsalgorithms.com/images/Motifs/probability_random_string.png)
 
 ### Profile-most Probable k-mer
@@ -525,13 +536,19 @@ Example:
         CAA
 ## Section 06
 consider the following Profile.
+
 ![pseudocounts](http://bioinformaticsalgorithms.com/images/Motifs/greedy_profile_1.png)
+
 The fourth symbol of TCGTGGATTTCC causes Pr(TCGTGGATTTCC, Profile) to be equal to zero. As a result, the entire string is assigned a zero probability, even though TCGTGGATTTCC differs from the consensus string at only one position. For that matter, TCGTGGATTTCC has the same low probability as AAATCTTGGAA, which is very different from the consensus string.
 
 In order to improve this unfair scoring, bioinformaticians often substitute zeroes with small numbers called pseudocounts. The simplest approach to introducing pseudocounts, called Laplace’s Rule of Succession. In the case of motifs, pseudocounts often amount to adding 1 (or some other small number) to each element of Count(Motifs). For example, say we have the following motif, count, and profile matrices:
+
 ![pseudocounts2](http://bioinformaticsalgorithms.com/images/Motifs/greedy_profile_2.png)
+
 Laplace’s Rule of Succession adds 1 to each element of Count(﻿Motifs), updating the two matrices to the following:
+
 ![pseudocounts2](http://bioinformaticsalgorithms.com/images/Motifs/greedy_profile_3.png)
+
 
 ### Greedy Motif Search with pseudocounts
     Code Challenge: Implement GreedyMotifSearch with pseudocounts.
@@ -588,7 +605,9 @@ Example:
 
 Note that RandomizedMotifSearch may change all t strings Motifs in a single iteration. This strategy may prove reckless, since some correct motifs (captured in Motifs) may potentially be discarded at the next iteration. GibbsSampler is a more cautious iterative algorithm that discards a single k-mer from the current set of motifs at each iteration and decides to either keep it or replace it with a new one. This algorithm thus moves with more caution in the space of all motifs, as illustrated below.
 
+
 ![random_gibbs](http://bioinformaticsalgorithms.com/images/Motifs/randomized_vs_gibbs.png)
+
 
     Code Challenge: Implement GibbsSampler.
 
@@ -633,7 +652,7 @@ Example:
         5
         
 # CHAPTER 3: How Do We Assemble Genomes?
-** This chapter is about assembling DNA **
+**This chapter is about assembling DNA**
 
 First, DNA is double-stranded, and we have no way of knowing a priori which strand a given read derives from, meaning that we will not know whether to use a read or its reverse complement when assembling a particular strand of a genome. Second, modern sequencing machines are not perfect, and the reads that they generate often contain errors. Sequencing errors complicate genome assembly because they prevent us from identifying all overlapping reads. Third, some regions of the genome may not be covered by any reads, making it impossible to reconstruct the entire genome.
 
@@ -673,7 +692,10 @@ If you followed our discussion of finding the origin of replication in bacterial
 
 ## Section 03
 In the figure below, consecutive 3-mers in TAATGCCATGGGATGTT are linked together to form this string's genome path.
+
+
 ![genome_path](http://bioinformaticsalgorithms.com/images/Assembly/path_graph.png)
+
 
 ### String Spelled by a Genome Path
     String Spelled by a Genome Path Problem. Reconstruct a string from its genome path.
@@ -797,7 +819,7 @@ Example:
         
 **We now have two ways of solving the String Reconstruction Problem. We can either find a Hamiltonian path in the overlap graph  or find an Eulerian path in the de Bruijn graph. Hamiltorian is NP but Euler is P so we go with Euler's solution**
 
-## section 08
+## Section 08
 ### Eulerian Cycle Problem
     Eulerian Cycle Problem: Find an Eulerian cycle in a graph.
 
@@ -930,7 +952,10 @@ First, given a k-mer substring of a genome, we define its coverage as the number
 There is also a sense of coverage in terms of how well a collection of sequencing reads "cover" the genome.  We have previously taken for granted that a sequencing machine can generate all k-mers present in the genome, but this assumption of "perfect coverage" does not hold in practice. For example, the popular Illumina sequencing technology generates reads that are approximately 300 nucleotides long, but this technology still misses many 300-mers present in the genome (even if the average coverage is very high), and nearly all the reads that it does generate have sequencing errors.  How, then, can we use these reads effectively?
 
 The left part of the figure below shows four 10-mer reads that capture some but not all of the 10-mers from an example genome. However, if we take the counterintuitive step of breaking these reads into shorter 5-mers (figure below, right), then these 5-mers exhibit perfect coverage. This read breaking approach, in which we break reads into shorter k-mers, is used by many modern assemblers.
+
+
 ![read_break](http://bioinformaticsalgorithms.com/images/Assembly/read_breaking.png)
+
 Read breaking must deal with a practical trade-off. On the one hand, the smaller the value of k, the larger the chance that the k-mer coverage is perfect. On the other hand, smaller values of k result in a more tangled de Bruijn graph, making it difficult to infer the genome from this graph.
 
 Even after read breaking, most assemblies still have gaps in k-mer coverage, causing the de Bruijn graph to have missing edges, and so the search for an Eulerian path fails. In this case, biologists often settle on assembling contigs (long, contiguous segments of the genome) rather than entire chromosomes. For example, a typical bacterial sequencing project may result in about a hundred contigs, ranging in length from a few thousand to a few hundred thousand nucleotides. For most genomes, the order of these contigs along the genome remains unknown. 
