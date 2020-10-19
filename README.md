@@ -127,12 +127,12 @@ our idea is to traverse the genome, keeping a running total of the difference be
 ![replication4](http://bioinformaticsalgorithms.com/images/Replication/increasing_decreasing_skew.png)
 
 
-Since we don't know the location of ori in a circular genome, let's linearize it (i.e., select an arbitrary position and pretend that the genome begins here), resulting in a linear string Genome. We define Skewi(Genome) as the difference between the total number of occurrences of G and the total number of occurrences of C in the first i nucleotides of Genome. The skew diagram is defined by plotting Skewi (Genome) (as i ranges from 0 to |Genome|), where Skew0 (Genome) is set equal to zero. The figure below shows a skew diagram for the DNA string CATGGGCATCGGCCATACGCC.
+Since we don't know the location of ori in a circular genome, let's linearize it (i.e., select an arbitrary position and pretend that the genome begins here), resulting in a linear string Genome. We define Skew_i(Genome) as the difference between the total number of occurrences of G and the total number of occurrences of C in the first i nucleotides of Genome. The skew diagram is defined by plotting Skew_i (Genome) (as i ranges from 0 to |Genome|), where Skew0 (Genome) is set equal to zero. The figure below shows a skew diagram for the DNA string CATGGGCATCGGCCATACGCC.
 
-Note that we can compute Skewi+1(Genome) from Skewi(Genome) according to the nucleotide in position i of Genome. If this nucleotide is G, then Skewi+1(Genome) = Skewi(Genome) + 1; if this nucleotide is C, then Skewi+1(Genome)= Skewi(Genome) – 1; otherwise, Skewi+1(Genome) = Skewi(Genome).
+Note that we can compute Skew_i+1(Genome) from Skew_i(Genome) according to the nucleotide in position i of Genome. If this nucleotide is G, then Skew_i+1(Genome) = Skew_i(Genome) + 1; if this nucleotide is C, then Skew_i+1(Genome)= Skew_i(Genome) – 1; otherwise, Skew_i+1(Genome) = Skew_i(Genome).
 
 
-**Exercise Break**: Give all values of Skewi (GAGCCACCGCGATA) for i ranging from 0 to 14.
+**Exercise Break**: Give all values of Skew_i (GAGCCACCGCGATA) for i ranging from 0 to 14.
 ![skew](http://bioinformaticsalgorithms.com/images/Replication/skew_diagram_basic.png)
 
 **Sample Input:**
@@ -151,7 +151,7 @@ Let's follow the 5' → 3' direction of DNA and walk along the chromosome from t
     Minimum Skew Problem: Find a position in a genome where the skew diagram attains a minimum.
 
     Input: A DNA string Genome.
-    Output: All integer(s) i minimizing Skewi (Genome) among all values of i (from 0 to |Genome|).
+    Output: All integer(s) i minimizing Skew_i (Genome) among all values of i (from 0 to |Genome|).
 
 Example:
     
