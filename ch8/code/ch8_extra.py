@@ -62,12 +62,13 @@ class Tree(object):
         return len(self.nodes)
 
     def traverse(self, i, k, path=[], weights=[]):
-        if not i in self.edges: return (False, [])
+        # if not i in self.edges: return (False, [])
         if len(path) == 0:
             path = [i]
             weights = [0]
 
         for j, w in self.edges[i]:
+            print(j, w)
             if j in path: continue
             path1 = path + [j]
             weights1 = weights + [w]
@@ -75,9 +76,8 @@ class Tree(object):
                 return (True, list(zip(path1, weights1)))
             else:
                 found_k, test = self.traverse(j, k, path1, weights1)
-                if found_k:
-                    return (found_k, test)
-        return (False, [])
+                return (found_k, test)
+        return (False, list(zip(path, weights)))
 
     def get_nodes(self):
         for node in self.nodes:
