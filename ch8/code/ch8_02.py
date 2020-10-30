@@ -23,16 +23,21 @@ def depth_first(adj_list, weights, leaves, current, next_node, visited, cost, pa
 
 def distance_between_leaves(n, adj_list, weights):
     paths = {}  # {0: {2: [(4, 11), (5, 4), (2, 6)], 1:[]}, 1: [], 2: [], 3: []}
+    d = np.zeros((n,n), dtype=int)
     degrees = graph_degrees(adj_list)
     # print(degrees)
     leaves = sorted([k for k, v in degrees.items() if v == [1, 1]])
     # print(leaves)
     for i, leaf in enumerate(leaves):  # first: 0->[1, 2, 3], 1->[2, 3]
-        leaf_paths = depth_first(adj_list, weights, leaves, leaf, adj_list[leaf][0], [leaf], {}, [])
-        paths[leaf] = sorted([(leaf, [], 0)] + leaf_paths)
+        visited = leaves[0: i + 1]
+        leaf_paths = depth_first(adj_list, weights, leaves, leaf, adj_list[leaf][0], visited, {}, [])
+        paths[leaf] = [(leaf, [], 0)] + leaf_paths
+        for path in paths[leaf]:
+            d[int(leaf), int(path[0])] = int(path[2])
+            d[int(path[0]), int(leaf)] = int(path[2])
 
     # print(paths)
-    return paths
+    return d, paths
 
 
 if __name__ == "__main__":
@@ -50,12 +55,12 @@ if __name__ == "__main__":
 #     )
     # print(adj_list)
     # print(weights)
-    # paths = distance_between_leaves(4, adj_list, weights)
-    # for leaf in paths.values():
-    #     print("\t".join([str(x[2]) for x in leaf]))
+    # d = distance_between_leaves(4, adj_list, weights)[0]
+    # for line in d:
+    #     print('\t'.join(map(str, line)))
 
     with open("../data/dataset_369348_12.txt") as file:
         adj_list, weights = format_weighted_adjacency_list(file.read())
-        paths = distance_between_leaves(32, adj_list, weights)
-        for leaf in paths.values():
-            print("\t".join([str(x[2]) for x in leaf]))
+        d = distance_between_leaves(32, adj_list, weights)[0]
+        for line in d:
+            print('\t'.join(map(str, line)))
