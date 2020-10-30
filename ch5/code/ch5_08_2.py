@@ -24,7 +24,8 @@ def format_weighted_adjacency_list(text):
     return adj_list, weights
 
 
-def longest_path_in_dag(start_node, end_node, adj_list, weights, is_local=False, is_fitting=False, is_overlap=False):
+def longest_path_in_dag(start_node, end_node, adj_list, weights, is_local=False, is_fitting=False,
+                        is_overlap=False, is_middle_=False):
     ordering = topological_ordering(adj_list)
     # delete start node and everything before it
     ordering = ordering[ordering.index(start_node)+1:]

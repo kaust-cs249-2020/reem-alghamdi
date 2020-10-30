@@ -39,5 +39,5 @@ if __name__ == "__main__":
 #     print(protein_translation("AGAUAAUACUCUUCU"))
 #     print(global_alignment("ACACA", "CACAC", matches=1, mismatches=1, sigma=10))
 #     print()
-#     for i in range(1, 11):
-#         print(i, global_alignment("ACACA", "CACAC", matches=1, mismatches=1, sigma=i))
+    for i in range(1, 11):
+        print(i, global_alignment("ACACA", "CACAC", matches=1, mismatches=1, sigma=i))
