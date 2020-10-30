@@ -41,26 +41,26 @@ def distance_between_leaves(n, adj_list, weights):
 
 
 if __name__ == "__main__":
-#     adj_list, weights = format_weighted_adjacency_list(
-#         """0->4:11
-# 1->4:2
-# 2->5:6
-# 3->5:7
-# 4->0:11
-# 4->1:2
-# 4->5:4
-# 5->4:4
-# 5->3:7
-# 5->2:6"""
-#     )
-    # print(adj_list)
-    # print(weights)
+    adj_list, weights = format_weighted_adjacency_list(
+        """0->4:11
+1->4:2
+2->5:6
+3->5:7
+4->0:11
+4->1:2
+4->5:4
+5->4:4
+5->3:7
+5->2:6"""
+    )
+    print(adj_list)
+    print(weights)
     # d = distance_between_leaves(4, adj_list, weights)[0]
     # for line in d:
     #     print('\t'.join(map(str, line)))
 
-    with open("../data/dataset_369348_12.txt") as file:
-        adj_list, weights = format_weighted_adjacency_list(file.read())
-        d = distance_between_leaves(32, adj_list, weights)[0]
-        for line in d:
-            print('\t'.join(map(str, line)))
+    # with open("../data/dataset_369348_12.txt") as file:
+    #     adj_list, weights = format_weighted_adjacency_list(file.read())
+    #     d = distance_between_leaves(32, adj_list, weights)[0]
+    #     for line in d:
+    #         print('\t'.join(map(str, line)))
