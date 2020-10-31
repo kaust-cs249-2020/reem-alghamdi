@@ -8,7 +8,7 @@ import pandas as pd
 from ch8.code.ch8_03 import format_matrix
 
 
-def closest_clusters(d, n):
+def closest_clusters(d):
     min_dist = float("inf")
     index = ()
     for i in d.keys():
@@ -34,7 +34,7 @@ def upgma(d, n):
     while len(clusters) > 1:
         # print("NEW")
         # print(d)
-        i, j = closest_clusters(d, np.shape(d)[0])
+        i, j = closest_clusters(d)
         c_i = clusters[i]
         c_j = clusters[j]
         elements_count = c_i + c_j
@@ -82,7 +82,7 @@ def upgma(d, n):
         clusters[inner] = elements_count
 
         inner += 1
-
+    # print(age)
     for edge, weight in weights.items():
         if weight == 0:
             v = edge[0]
@@ -113,5 +113,16 @@ if __name__ == "__main__":
 #     3	5	2	0"""
 #     solve_upgma(4, string)
 
-    with open("../data/dataset_369352_8.txt") as file:
-        solve_upgma(30, file.read())
+    # with open("../data/dataset_369352_8.txt") as file:
+    #     solve_upgma(30, file.read())
+
+    string = """0	295	300	524	1077	1080	978	941	940
+295	0	314	487	1071	1088	1010	963	966
+300	314	0	472	1085	1088	1025	965	956
+524	487	472	0	1101	1099	1021	962	965
+1076	1070	1085	1101	0	818	1053	1057	1054
+1082	1088	1088	1098	818	0	1070	1085	1080
+976	1011	1025	1021	1053	1070	0	963	961
+941	963	965	962	1057	1085	963	0	16
+940	966	956	965	1054	1080	961	16	0"""
+    solve_upgma(9, string)
