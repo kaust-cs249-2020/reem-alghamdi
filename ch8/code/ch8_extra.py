@@ -47,7 +47,7 @@ class Tree(object):
     def are_linked(self, a, b):
         return len([e for (e, w) in self.edges[a] if e == b]) > 0
 
-    def AdjList(self, includeNodes=False):
+    def AdjList(self, includeNodes=False, is_float=False):
         print('AdjList')
         self.nodes.sort()
         if includeNodes:
@@ -56,7 +56,10 @@ class Tree(object):
             if node in self.edges:
                 for edge in self.edges[node]:
                     end, weight = edge
-                    print('%i->%i:%d' % (node, end, weight))
+                    if is_float:
+                        print('%i->%i:%.3f' % (node, end, weight))
+                    else:
+                        print('%i->%i:%d' % (node, end, weight))
 
     def num_nodes(self):
         return len(self.nodes)
