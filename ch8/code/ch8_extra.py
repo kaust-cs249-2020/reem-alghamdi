@@ -4,11 +4,30 @@
 """
 
 
+class Node:
+    def __init__(self, val, label=None):
+        self.index = val
+        self.label = label
+
+    def add_s(self, tbl):
+        self.s = tbl
+
+    def __str__(self):
+        return self.label if self.label else self.index
+
+    def __repr__(self):
+        return self.index if not self.label else str((self.index, self.label))
+
+    def __lt__(self, other):
+        return (self.label if self.label else self.index) < \
+               (other.label if other.label else other.index)
+
+
 class Tree(object):
 
     ## public code for the data structure Tree
 
-    def __init__(self, N=-1, bidirectional=True):
+    def __init__(self, N=-1, bidirectional=True) -> object:
         self.nodes = list(range(N))
         self.edges = {}
         self.bidirectional = bidirectional
@@ -47,7 +66,7 @@ class Tree(object):
     def are_linked(self, a, b):
         return len([e for (e, w) in self.edges[a] if e == b]) > 0
 
-    def AdjList(self, includeNodes=False, is_float=False):
+    def AdjList(self, includeNodes=False, is_float=False, is_string=False):
         print('AdjList')
         self.nodes.sort()
         if includeNodes:
@@ -56,10 +75,13 @@ class Tree(object):
             if node in self.edges:
                 for edge in self.edges[node]:
                     end, weight = edge
+                    string = '%s->%s:' if is_string else '%i->%i:'
                     if is_float:
-                        print('%i->%i:%.3f' % (node, end, weight))
+                        string += '%.3f'
                     else:
-                        print('%i->%i:%d' % (node, end, weight))
+                        string += '%d'
+
+                    print(string % (node, end, weight))
 
     def num_nodes(self):
         return len(self.nodes)
