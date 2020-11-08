@@ -12,6 +12,9 @@ class Node:
     def add_s(self, tbl):
         self.s = tbl
 
+    def add_b(self, backtrack):
+        self.b = backtrack
+
     def __str__(self):
         return self.label if self.label else self.index
 
@@ -24,6 +27,17 @@ class Node:
 
 
 class Tree(object):
+    def make_root(self):
+        self.root = None
+        max_edge = max([len(x) for x in self.edges.values()])
+        for node in self.nodes:
+            if 1 < len(self.edges[node]) <= max_edge:
+                self.root = node
+            if len(self.edges[node]) == 2:
+                print("FOUND PROPER ROOT")
+                self.root = node
+                break
+
 
     ## public code for the data structure Tree
 
@@ -51,12 +65,12 @@ class Tree(object):
         if not a in self.nodes:
             self.nodes.append(a)
         if a in self.edges:
-            self.edges[a] = [(b0, w0) for (b0, w0) in self.edges[a] if b0 != b] + [(b, weight)]
+            self.edges[a] = [[b0, w0] for [b0, w0] in self.edges[a] if b0 != b] + [[b, weight]]
         else:
-            self.edges[a] = [(b, weight)]
+            self.edges[a] = [[b, weight]]
 
     def half_unlink(self, a, b):
-        links = [(e, w) for (e, w) in self.edges[a] if e != b]
+        links = [[e, w] for [e, w] in self.edges[a] if e != b]
         if len(links) < len(self.edges[a]):
             self.edges[a] = links
         else:
@@ -64,7 +78,7 @@ class Tree(object):
             self.print()
 
     def are_linked(self, a, b):
-        return len([e for (e, w) in self.edges[a] if e == b]) > 0
+        return len([e for [e, w] in self.edges[a] if e == b]) > 0
 
     def AdjList(self, includeNodes=False, is_float=False, is_string=False):
         print('AdjList')
