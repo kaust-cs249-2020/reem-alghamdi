@@ -38,9 +38,6 @@ class Tree(object):
                 self.root = node
                 break
 
-
-    ## public code for the data structure Tree
-
     def __init__(self, N=-1, bidirectional=True) -> object:
         self.nodes = list(range(N))
         self.edges = {}

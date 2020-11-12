@@ -1,6 +1,6 @@
 """
 @BY: Reem Alghamdi
-@DATE: 31-10-2020
+@DATE: 10-11-2020
 """
 from copy import deepcopy
 
@@ -96,7 +96,7 @@ def backtrack(t, visited, current, next_node):
 
 def solve_small_parsimony(n, string):
 
-    tree = Tree()
+    tree = Tree(bidirectional=False)
     nodes = {}
     for i, line in enumerate(string.split("\n")):
         pairs = line.split("->")
@@ -134,7 +134,7 @@ def solve_small_parsimony(n, string):
 
 def solve_full_tree(t):
     m = 0
-    tree = Tree()
+    tree = Tree(bidirectional=False)
     nodes = {}
     for i, line in enumerate(string.split("\n")):
         pairs = line.split("->")
