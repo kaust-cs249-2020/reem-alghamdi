@@ -2,18 +2,17 @@
 @BY: Reem Alghamdi
 @DATE: 30-10-2020
 """
+from random import choice
 
 
 class Node:
     def __init__(self, val, label=None):
         self.index = val
         self.label = label
-
-    def add_s(self, tbl):
-        self.s = tbl
-
-    def add_b(self, backtrack):
-        self.b = backtrack
+        self.parent = None
+        self.children = []
+        self.s = {}
+        self.b = {}
 
     def __str__(self):
         return self.label if self.label else self.index
@@ -26,23 +25,23 @@ class Node:
                (other.label if other.label else other.index)
 
 
-class Tree(object):
+class Tree:
     def make_root(self):
         self.root = None
-        max_edge = max([len(x) for x in self.edges.values()])
+        temp = None
         for node in self.nodes:
-            if 1 < len(self.edges[node]) <= max_edge:
+            if not temp and len(node.children) > 1:
+                temp = node
+            if not node.parent:
                 self.root = node
-            if len(self.edges[node]) == 2:
-                print("FOUND PROPER ROOT")
-                self.root = node
-                break
+        if not self.root:
+            self.root = temp
 
-    def __init__(self, N=-1, bidirectional=True) -> object:
-        self.nodes = list(range(N))
+    def __init__(self, bidirectional=True):
+        self.root = None
+        self.nodes = []
         self.edges = {}
         self.bidirectional = bidirectional
-        self.N = N
 
     def link(self, start, end, weight=1):
         self.half_link(start, end, weight)
@@ -59,8 +58,11 @@ class Tree(object):
             self.print()
 
     def half_link(self, a, b, weight=1):
-        if not a in self.nodes:
+
+        if a not in self.nodes:
             self.nodes.append(a)
+        if b not in self.nodes:
+            self.nodes.append(b)
         if a in self.edges:
             self.edges[a] = [[b0, w0] for [b0, w0] in self.edges[a] if b0 != b] + [[b, weight]]
         else:
@@ -75,10 +77,14 @@ class Tree(object):
             self.print()
 
     def are_linked(self, a, b):
-        return len([e for [e, w] in self.edges[a] if e == b]) > 0
+        a_b = []
+        if a in self.edges:
+            a_b += [e for e in self.edges.get(a) if e[0] == b]
+        if b in self.edges:
+            a_b += [e for e in self.edges.get(b) if e[0] == a]
+        return len(a_b) > 0
 
     def AdjList(self, includeNodes=False, is_float=False, is_string=False):
-        print('AdjList')
         self.nodes.sort()
         if includeNodes:
             print(self.nodes)
