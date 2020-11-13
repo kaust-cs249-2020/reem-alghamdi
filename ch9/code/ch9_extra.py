@@ -59,18 +59,21 @@ class Trie:
                 print(str(start) + "->" + str(edge[0]) + ":" + edge[1])
 
 
+
+
+
 class SuffixTrie:
     class Node:
         def __init__(self, text_len):
             self.text_len = text_len
-            # self.id = ''.join(random.choice(string.ascii_letters) for x in range(self.text_len))
+            self.id = hex(id(self))  # ''.join(random.choice(string.ascii_letters) for x in range(self.text_len))
             self.label = None
 
         def add_label(self, label):
             self.label = label
 
-        # def __repr__(self):
-        #     return self.id + " " + str(self.label) if self.label != None else self.id
+        def __repr__(self):
+            return str(self.id) + " " + str(self.label) if self.label != None else self.id
 
     def __init__(self, text):
         self.text_len = len(text)
@@ -78,9 +81,6 @@ class SuffixTrie:
         self.root = SuffixTrie.Node(self.text_len)
         self.nodes = [self.root]
         self.edges = {}
-
-    def paths(self):
-        return maximal_non_branching_paths(self.edges)
 
     def add_node(self, node):
         self.nodes.append(node)
@@ -98,10 +98,12 @@ class SuffixTrie:
                     return end
         return
 
-    def print_edge_symbols(self):
+    def edge_symbols(self):
+        edges = []
         for start, ends in self.edges.items():
             for end, pos, count in ends:
-                print(self.text[pos:pos+count])
+                edges.append(self.text[pos:pos+count])
+        return edges
 
     def print(self):
         for start, ends in self.edges.items():
