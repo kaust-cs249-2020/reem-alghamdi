@@ -114,6 +114,15 @@ class SuffixTrie:
         for node in self.nodes:
             print(f"{node.label}: {node.color}")
 
+    def lexicographical_sort(self):
+        edges = {}
+        for start, ends in self.edges.items():
+            edges[start] = {}
+            for end, pos, count in ends:
+                edges[start][end] = self.text[pos:pos+count]
+            edges[start] = [(k, v) for k, v in sorted(edges[start].items(), key=lambda x: x[1])]
+        return edges
+
     def print(self):
         for start, ends in self.edges.items():
             for end, symbol, position in ends:
