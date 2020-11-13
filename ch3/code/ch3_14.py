@@ -7,7 +7,7 @@ from ch3.code.ch3_10 import graph_degrees
 
 
 def maximal_non_branching_paths(adj_list):
-
+    print(adj_list)
     paths = []
     degrees = graph_degrees(adj_list)
     # print(adj_list)

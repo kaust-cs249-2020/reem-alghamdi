@@ -2,6 +2,8 @@
 @BY: Reem Alghamdi
 @DATE: 08-11-2020
 """
+import random
+import string
 
 
 class Trie:
@@ -55,3 +57,102 @@ class Trie:
         for start, edges in self.edges.items():
             for edge in edges:
                 print(str(start) + "->" + str(edge[0]) + ":" + edge[1])
+
+
+class SuffixTrie:
+    class Node:
+        def __init__(self, text_len):
+            self.text_len = text_len
+            # self.id = ''.join(random.choice(string.ascii_letters) for x in range(self.text_len))
+            self.label = None
+
+        def add_label(self, label):
+            self.label = label
+
+        # def __repr__(self):
+        #     return self.id + " " + str(self.label) if self.label != None else self.id
+
+    def __init__(self, text):
+        self.text_len = len(text)
+        self.text = text
+        self.root = SuffixTrie.Node(self.text_len)
+        self.nodes = [self.root]
+        self.edges = {}
+
+    def paths(self):
+        return maximal_non_branching_paths(self.edges)
+
+    def add_node(self, node):
+        self.nodes.append(node)
+
+    def link(self, a, b, symbol, position):
+        if a in self.edges:
+            self.edges[a].append([b, symbol, position])
+        else:
+            self.edges[a] = [[b, symbol, position]]
+
+    def find_node_connected(self, node, symbol):
+        if node in self.edges:
+            for end, s, position in self.edges[node]:
+                if symbol == s:
+                    return end
+        return
+
+    def print_edge_symbols(self):
+        for start, ends in self.edges.items():
+            for end, pos, count in ends:
+                print(self.text[pos:pos+count])
+
+    def print(self):
+        for start, ends in self.edges.items():
+            for end, symbol, position in ends:
+                print(start, (symbol, position), end)
+
+
+def graph_degrees(graph):
+    """
+    return pairs, first value is the in-degree, the second is out-degree
+    """
+    degrees = {}
+    for i in graph.keys():
+        ends = graph[i]
+        out_degree = len(ends)
+
+        if i in degrees:
+            degrees[i][1] = out_degree
+        else:
+            degrees[i] = [0, out_degree]
+
+        for j, _, _ in ends:
+
+            if j in degrees:
+                degrees[j][0] += 1
+            else:
+                degrees[j] = [1, 0]
+    return degrees
+
+
+def maximal_non_branching_paths(adj_list):
+    paths = []
+    degrees = graph_degrees(adj_list)
+
+    visited = []
+    for v in degrees.keys():
+        if degrees[v] != [1, 1]:
+            if degrees[v][1] > 0:
+                visited.append(v)
+                try:
+                    for w in adj_list[v]:
+                        non_branching_path = [v, w]
+                        while degrees[w[0]] == [1, 1]:
+                            visited.append(w[0])
+                            u = adj_list[w[0]][0]
+                            non_branching_path.append(u)
+                            w = u
+                        paths.append(non_branching_path)
+
+                except Exception as e:
+                    pass
+
+    return paths
+
