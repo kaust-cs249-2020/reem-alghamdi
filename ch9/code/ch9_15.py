@@ -6,18 +6,8 @@ from copy import deepcopy, copy
 
 from ch9.code.ch9_extra import SuffixTrie, maximal_non_branching_paths
 
-"""
-ModifiedSuffixTreeConstruction(Text)
-    Trie ← ModifiedSuffixTrieConstruction
-    for each non-branching path Path in Trie
-        substitute Path by a single edge e connecting the first and last nodes of Path
-        Position(e) ← Position(first edge of Path)
-        Length(e) ← number of edges of Path
-    return Trie
-"""
 
-
-def modified_suffix_trie_construction(text):
+def modified_suffix_trie_construction(text, sep_i=None):
     text_len = len(text)
     trie = SuffixTrie(text)
     for i in range(text_len):
@@ -35,6 +25,12 @@ def modified_suffix_trie_construction(text):
                 current_node = new_node
         if current_node not in trie.edges:
             current_node.label = i
+            if sep_i:
+                if i < sep_i:
+                    current_node.color = "blue"
+                else:
+                    current_node.color = "red"
+
     return trie
 
 
@@ -68,24 +64,28 @@ def dfs_shrinkage(trie, parent, node, edges, visited, pos, count):
                     trie.edges[node][i] = [x[0], x[2], 1]
 
 
-def modified_suffix_tree_construction(text):
-    trie = modified_suffix_trie_construction(text)
+def modified_suffix_tree_construction(text, sep_i=None):
+    trie = modified_suffix_trie_construction(text, sep_i)
     paths = maximal_non_branching_paths(trie.edges)
     new_edges = {}
     new_nodes = []
     for path in paths:
         a = path[0]
         b = path[-1][0]
-        new_nodes.append(a)
-        new_nodes.append(b)
+        if a not in new_nodes:
+            new_nodes.append(a)
+        if b not in new_nodes:
+            new_nodes.append(b)
         p = path[1][2]
+        b.parent = a
         if a in new_edges:
+            a.children.append(b)
             new_edges[a].append([b, p, len(path) - 1])
         else:
+            a.children = [b]
             new_edges[a] = [[b, p, len(path) - 1]]
     # dfs_shrinkage(trie, None, trie.root, trie.edges[trie.root], [], None, 1)
     # trie.print()
-    # print()
     trie.edges = new_edges
     trie.nodes = new_nodes
     return trie

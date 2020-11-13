@@ -59,21 +59,24 @@ class Trie:
                 print(str(start) + "->" + str(edge[0]) + ":" + edge[1])
 
 
-
-
-
 class SuffixTrie:
     class Node:
         def __init__(self, text_len):
             self.text_len = text_len
             self.id = hex(id(self))  # ''.join(random.choice(string.ascii_letters) for x in range(self.text_len))
             self.label = None
+            self.parent = None
+            self.color = "gray"
+            self.children = []
 
         def add_label(self, label):
             self.label = label
 
         def __repr__(self):
-            return str(self.id) + " " + str(self.label) if self.label != None else self.id
+            r = str(self.id)
+            r += " " + str(self.color) + " "
+            r += str(self.label) if self.label != None else ""
+            return r
 
     def __init__(self, text):
         self.text_len = len(text)
@@ -86,6 +89,8 @@ class SuffixTrie:
         self.nodes.append(node)
 
     def link(self, a, b, symbol, position):
+        a.children.append(b)
+        b.parent = a
         if a in self.edges:
             self.edges[a].append([b, symbol, position])
         else:
@@ -104,6 +109,10 @@ class SuffixTrie:
             for end, pos, count in ends:
                 edges.append(self.text[pos:pos+count])
         return edges
+
+    def print_colors(self):
+        for node in self.nodes:
+            print(f"{node.label}: {node.color}")
 
     def print(self):
         for start, ends in self.edges.items():

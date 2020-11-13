@@ -20,9 +20,6 @@ class ColoredTree:
         self.nodes = []
         self.edges = {}
 
-    def add_node(self, node):
-        self.nodes.append(node)
-
     def link(self, a, b):
         a.children.append(b)
         b.parent = a
@@ -85,7 +82,6 @@ def adj_list_colors_to_colored_tree(adj_list, colors):
 
 def tree_coloring(colored_tree):
     queue = set([node.parent for node in colored_tree.nodes if node.color != "gray"])
-    print(queue)
     while queue:
         node = queue.pop()
         children_colors = set([x.color for x in node.children])
