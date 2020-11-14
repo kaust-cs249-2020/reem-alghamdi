@@ -26,16 +26,32 @@ class Node:
 
 
 class Tree:
+    def reassign_depth_first(self, parent, node, visited):
+        if node not in visited:
+            visited.append(node)
+            if node in self.edges:  # not leaf node
+                node.children = [x[0] for x in self.edges[node] if x[0] != parent]
+                node.parent = parent
+                for child in node.children:
+                    self.reassign_depth_first(node, child, visited)
+            else:
+                node.parent = parent
+                node.children = []
+
+    def reassign_relationships(self):
+        self.reassign_depth_first(None, self.root, [])
+
     def make_root(self):
         self.root = None
         temp = None
         for node in self.nodes:
-            if not temp and len(node.children) > 1:
+            if not temp and node in self.edges and len(self.edges[node]) > 2:
                 temp = node
             if not node.parent:
                 self.root = node
         if not self.root:
             self.root = temp
+            self.reassign_relationships()
 
     def __init__(self, bidirectional=True):
         self.root = None
