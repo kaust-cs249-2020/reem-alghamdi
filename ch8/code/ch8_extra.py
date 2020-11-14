@@ -122,10 +122,8 @@ class Tree:
                 if [start, w] not in self.edges[end]:
                     self.edges[end].append([start, w])
 
-
-
-
-    def AdjList(self, includeNodes=False, is_float=False, is_string=False, is_weighted=True):
+    def AdjList(self, includeNodes=False, is_float=False, is_string=False, is_weighted=True, to_print=True):
+        out = []
         self.nodes.sort()
         if includeNodes:
             print(self.nodes)
@@ -140,9 +138,12 @@ class Tree:
                         string += '%.3f'
                     if is_weighted:
                         string += '%d'
-                        print(string % (node, end, weight))
+                        out.append(string % (node, end, weight))
                     else:
-                        print(string % (node, end))
+                        out.append(string % (node, end))
+        if to_print:
+            print('\n'.join(out))
+        return '\n'.join(out)
 
     def num_nodes(self):
         return len(self.nodes)

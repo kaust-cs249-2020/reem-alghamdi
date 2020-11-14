@@ -56,21 +56,19 @@ def nearest_neighbour_interchange(string):
     while new_score < score:
         score = new_score
         tree = new_tree
+        print(str(score) + "\n" + tree.AdjList(is_string=True, to_print=False))
+        print()
         for start, edges in tree.edges.items():
-            # print(start.parent, start, start.children, edges)
             for end in start.children:
                 if len(end.children) > 0:
                     for nn in nearest_neighbour_tree(start, end, tree):
                         nn.make_root()
                         nn, scr = solve_full_tree(nn, m)
                         nn.unroot()
+
                         if scr < new_score:
                             new_score = scr
                             new_tree = nn
-                            print(scr)
-                            nn.AdjList(is_string=True)
-                            print()
-
 
     return new_tree
 
@@ -114,5 +112,7 @@ if __name__ == "__main__":
 # 6->7"""
 #     tree = nearest_neighbour_interchange(string)
 
-    with open("../data/dataset_369356_8_nn2.txt") as file:
+    # with open("../data/dataset_369356_8_nn2.txt") as file:
+    #     tree = nearest_neighbour_interchange(file.read())
+    with open("../data/dataset_369356_8(1).txt") as file:
         tree = nearest_neighbour_interchange(file.read())

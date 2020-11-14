@@ -43,25 +43,6 @@ def longest_shared_substring(text1, text2):
     return colored_shared_depth_first(colored_tree, combo, colored_tree.root, 0, 0, [], "", [])[0]
 
 
-def colored_non_shared_depth_first(trie, text, b, pos, count, visited, string, paths):
-    if b not in visited:
-        visited.append(b)
-        if b in trie.edges:
-            for n, p, c in trie.edges[b]:
-                colored_non_shared_depth_first(trie, text, n, p, c, visited, string, paths)
-        else:
-            return b.color, 1
-    return sorted(paths, key=len)
-
-
-def shortest_non_shared_substring(text1, text2):
-    trie1 = modified_suffix_tree_construction(text1 + "$")
-    trie2 = modified_suffix_tree_construction(text2 + "$")
-    l1 = set(repeat_depth_first(trie1, text1 + "$", trie1.root, 0, 0, [], "", []))
-    l2 = set(repeat_depth_first(trie2, text2 + "$", trie2.root, 0, 0, [], "", []))
-    print(l1)
-    print(l2)
-    return l1 - l2
 
 
 if __name__ == "__main__":
@@ -77,4 +58,5 @@ if __name__ == "__main__":
     # t2 = "CCACGCGCCAGAGCCTAGGAGGGCCGACTACAACGAATTATTCACTCAGACGTAGGAGTTACCCGTATGAGCTGGCTATGGGTCATGGGTCAAAATAGCCCGCTGTGACAGTTCACGAGAGTAACAAGGTACGTAATTCGCTGCTAAACATAAATAAGCCATGTGGCGTCAAGCTCCATAATCCAACGCGCGCCGGTCGACGGAGCATTACTCCTTGCCGCAAAAAGCTTTCGTGCGCAGAGGTGTTGATACTTCTTAAGATCATATTCTATGTGCTGGCACGGTGAGTGCAGATTCGATACGGAAGAACAGGCAGCATCCGGAGAGAGAGAAGATAAGTTTCGCAAAGGGTACCCTTGATAACCATATTTAATGTTACCAGGCGGTGTACTAATTTCCGTGGCCGGTCGAAGCTTGCTGAACCTATGACTCCGCCCCGTTCATTTCGGTGGGCTGTGTAACGCTAATACTATCTATGACTAGTAATACTTTCTAGTCTCCTCTAGGCGTGCTCAGTATGCTGGCCGTGAGAGTAGCTCACCTCTTACCCTTATGTATTATTTATTAATGCGCCTTAATGCGTAATTCTCAGTCGTCCAACCCATCTCAAGCACTAGACAAAAAGGAAGGGTGAATCTAGTGCCAACGCACGCGCAAGATGACAGTGCCAGCAAGCAGAAGAATATGTTCGATTAGGATTACTTGGCACCCGGCACTCGGCTGTTGTCGTAATGATACGTCGTGTAGTATCGTATCCTGTAAACACAAGGGAATTCGACAATAAAGTCTACAAGCACTTGATCTGATCGGGACAGACCTTAAGTACACCAGCCTGTGGCAATGCGTTCTCTACAATACACTAGTACAGGATATCGCAGGCGACCACAAGGTCGTGATTAGTATGCTAGACTAGCACCCATATGCAGTTTCCACTTCTCTCCTGTTAACACAAGCTTTGTGGGAAATTCTGCTGCTTAAAACTATCAAGAGAGATGAGATC"
     # print(longest_shared_substring(t1, t2))
 
+    print(shortest_non_shared_substring("panama", "bananas"))
     print(shortest_non_shared_substring("CCAAGCTGCTAGAGG", "CATGCTGGGCTGGCT"))
