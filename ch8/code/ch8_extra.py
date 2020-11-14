@@ -29,14 +29,17 @@ class Tree:
     def reassign_depth_first(self, parent, node, visited):
         if node not in visited:
             visited.append(node)
+            # print(node.parent, node, node.children)
             if node in self.edges:  # not leaf node
                 node.children = [x[0] for x in self.edges[node] if x[0] != parent]
+                self.edges[node] = [x for x in self.edges[node] if x[0] != parent]
+                if len(self.edges[node]) == 0:
+                    del self.edges[node]
                 node.parent = parent
                 for child in node.children:
                     self.reassign_depth_first(node, child, visited)
             else:
                 node.parent = parent
-                node.children = []
 
     def reassign_relationships(self):
         self.reassign_depth_first(None, self.root, [])
@@ -51,7 +54,10 @@ class Tree:
                 self.root = node
         if not self.root:
             self.root = temp
-            self.reassign_relationships()
+        self.reassign_relationships()
+        # print()
+        # for node in self.nodes:
+        #     print(node.parent, node, node.children, self.edges.get(node))
 
     def __init__(self, bidirectional=True):
         self.root = None
@@ -99,6 +105,25 @@ class Tree:
         if b in self.edges:
             a_b += [e for e in self.edges.get(b) if e[0] == a]
         return len(a_b) > 0
+
+    def edges_string(self):
+        string = []
+        for start, edges in self.edges.items():
+            for end, weight in edges:
+                string.append(f"{start.label if start.label else start.index}->{end.label if end.label else end.index}")
+        return string
+
+    def unroot(self):
+        for node in self.nodes:
+            if node not in self.edges:
+                self.edges[node] = []
+        for start, edges in self.edges.items():
+            for end, w in edges:
+                if [start, w] not in self.edges[end]:
+                    self.edges[end].append([start, w])
+
+
+
 
     def AdjList(self, includeNodes=False, is_float=False, is_string=False, is_weighted=True):
         self.nodes.sort()

@@ -53,16 +53,17 @@ def small_parsimony(t):
                 score += minimum
                 v.b[k][node] = c_i
             v.s[k] = score
-    t.root.label = min(t.root.s, key=t.root.s.get)
-    backtrack([], t.root)
+    backtrack([x for x in t.nodes if len(x.children) == 0], t.root)
     return t
 
 
 def backtrack(visited, current):
     if current not in visited:
         visited.append(current)
-        if not current.label:
-           current.label = current.parent.b[current.parent.label][current]
+        if not current.parent:
+            current.label = min(current.s, key=current.s.get)
+        else:
+            current.label = current.parent.b[current.parent.label][current]
         for n in current.children:
             backtrack(visited, n)
 
@@ -76,9 +77,20 @@ def solve_small_parsimony(string):
         print(node.label, node.index, node.s, node.b)
 
 
-def solve_full_tree(string):
+def solve_full_tree_print(string):
     tree, m, _ = format_to_tree(string)
+    tree.make_root()
+    # print("ROOT ", tree.root)
+    # for node in tree.nodes:
+    #     print(node.parent, node, node.children)
+    # tree.AdjList(is_string=True)
+    tree, total = solve_full_tree(tree, m)
+    print(total)
+    tree.unroot()
+    # tree.AdjList(is_string=True)
 
+
+def solve_full_tree(tree, m):
     sub_trees = []
     for i in range(m):
         sub_trees.append(deepcopy(tree))
@@ -99,8 +111,8 @@ def solve_full_tree(string):
             end, weight = edge
             edge[1] = hamming_distance(start.label, end.label)
             total += edge[1]
-    print(total // 2)
-    final_tree.AdjList(is_string=True)
+    # print(total // 2)
+    return final_tree, total
 
 
 def format_to_tree(string):
@@ -147,39 +159,34 @@ def format_to_tree(string):
         a.children.append(b)
         b.parent = a
         tree.link(a, b)
-    tree.make_root()
-    # print("ROOT ", tree.root)
-    # for node in tree.nodes:
-    #     print(node.parent, node, node.children)
-    # tree.AdjList(is_string=True)
     return tree, m, nodes
 
 
 if __name__ == "__main__":
-    string = """8->C
-8->C
-9->A
-9->C
-10->G
-10->G
-11->T
-11->C
-12->8
-12->9
-13->10
-13->11
-14->12
-14->13"""
-    solve_small_parsimony(string)
+#     string = """8->C
+# 8->C
+# 9->A
+# 9->C
+# 10->G
+# 10->G
+# 11->T
+# 11->C
+# 12->8
+# 12->9
+# 13->10
+# 13->11
+# 14->12
+# 14->13"""
+#     solve_small_parsimony(string)
     string = """4->CAAATCCC
 4->ATTGCGAC
 5->CTGCGCTG
 5->ATGGACGA
 6->4
 6->5"""
-    solve_full_tree(string)
-    # with open("../data/dataset_369355_10.txt") as file:
-    #     solve_full_tree(file.read())
+    solve_full_tree_print(string)
+    with open("../data/dataset_369355_10.txt") as file:
+        solve_full_tree_print(file.read())
     string = """TCGGCCAA->4
 4->TCGGCCAA
 CCTGGCTG->4
@@ -190,6 +197,6 @@ TGAGTACC->5
 5->TGAGTACC
 4->5
 5->4"""
-    solve_full_tree(string)
-#     with open("../data/dataset_369355_12.txt") as file:
-#         solve_full_tree(file.read())
+    solve_full_tree_print(string)
+    with open("../data/dataset_369355_12.txt") as file:
+        solve_full_tree_print(file.read())
