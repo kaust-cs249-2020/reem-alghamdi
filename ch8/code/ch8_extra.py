@@ -100,7 +100,7 @@ class Tree:
             a_b += [e for e in self.edges.get(b) if e[0] == a]
         return len(a_b) > 0
 
-    def AdjList(self, includeNodes=False, is_float=False, is_string=False):
+    def AdjList(self, includeNodes=False, is_float=False, is_string=False, is_weighted=True):
         self.nodes.sort()
         if includeNodes:
             print(self.nodes)
@@ -108,13 +108,16 @@ class Tree:
             if node in self.edges:
                 for edge in self.edges[node]:
                     end, weight = edge
-                    string = '%s->%s:' if is_string else '%i->%i:'
+                    string = '%s->%s' if is_string else '%i->%i'
+                    if is_weighted:
+                        string += ':'
                     if is_float:
                         string += '%.3f'
-                    else:
+                    if is_weighted:
                         string += '%d'
-
-                    print(string % (node, end, weight))
+                        print(string % (node, end, weight))
+                    else:
+                        print(string % (node, end))
 
     def num_nodes(self):
         return len(self.nodes)
