@@ -21,20 +21,6 @@ def trie_construction(patterns):
 
     return trie
 
-"""
-PrefixTrieMatching(Text, Trie)
-    symbol ← first letter of Text
-    v ← root of Trie
-    while forever
-        if v is a leaf in Trie
-            output the pattern spelled by the path from the root to v
-        else if there is an edge (v, w) in Trie labeled by symbol
-            symbol ← next letter of Text
-            v ← w
-        else
-            return "no matches found"
-"""
-
 
 def prefix_trie_matching(text, trie):
     i = 0

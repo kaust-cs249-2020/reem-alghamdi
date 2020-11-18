@@ -2,8 +2,6 @@
 @BY: Reem Alghamdi
 @DATE: 08-11-2020
 """
-import random
-import string
 
 
 class Trie:
@@ -173,6 +171,5 @@ def maximal_non_branching_paths(adj_list):
 
                 except Exception as e:
                     pass
-
     return paths
 

@@ -27,11 +27,16 @@ def longest_repeat_problem(text):
 def colored_shared_depth_first(trie, text, b, pos, count, visited, string, paths):
     if b not in visited:
         visited.append(b)
-        if b in trie.edges and b.color == "purple":
-            string += text[pos:pos + count]
+
+
+        if b in trie.edges:
+            # print(b)
             for n, p, c in trie.edges[b]:
-                colored_shared_depth_first(trie, text, n, p, c, visited, string, paths)
-        else:
+                if n.color in ["purple", "blue"]:
+                    colored_shared_depth_first(trie, text, n, pos, count, visited, string, paths)
+        elif b.color == "blue":
+            # print(b)
+            string = text[pos:pos + count]
             paths.append(string)
     return sorted(paths, key=len, reverse=True)
 
@@ -43,6 +48,32 @@ def longest_shared_substring(text1, text2):
     return colored_shared_depth_first(colored_tree, combo, colored_tree.root, 0, 0, [], "", [])[0]
 
 
+def colored_non_shared_breadth_first(trie, text, b, visited, queue):
+    visited.append(b)
+    queue.append((b, 0, 0))
+    paths = []
+    level = 0
+    while queue:
+        b, pos, count = queue.pop(0)
+        for n, p, c in trie.edges[b]:
+          if n not in visited:
+            visited.append(n)
+            if n in trie.edges:
+                queue.append((n, p, c))
+            if n.color == "blue":
+                paths.append(text[p:p + c][level:])
+        level += 1
+
+    return sorted(paths, key=len)
+
+
+def shortest_non_shared_substring(text1, text2):
+    combo = text1 + "#" + text2 + "$"
+    colored_tree = modified_suffix_tree_construction(combo, len(text1) + 1)
+    tree_coloring(colored_tree)
+    # colored_tree.print_colors()
+    # colored_tree.print()
+    return colored_non_shared_breadth_first(colored_tree, combo, colored_tree.root, [], [])
 
 
 if __name__ == "__main__":
@@ -60,3 +91,4 @@ if __name__ == "__main__":
 
     print(shortest_non_shared_substring("panama", "bananas"))
     print(shortest_non_shared_substring("CCAAGCTGCTAGAGG", "CATGCTGGGCTGGCT"))
+    # print(shortest_non_shared_substring("GAGCGATGTGTAAAGACGGGCCTAGTGTGTTATTGGTGAGGATCCGCAAATTCCGCTTTAACATCGCTCAACCGTCCACGAGCAGCTCGCGGCTTGTTTGATTTTGCTCACCCGGAACTAAGCCTTCAATAATTGCGGGACACTTCTACTTTCCATGTATTAAAACCTTATAATTCCGAGAGACTGACATTTTAACCCAGGGATTCTCGGGGCTTGTAGGTCACTGGCGTTAGCTCTGCCAATGTTCTTCATCGCCGAAATTAAACTCGTGACCTTGCCCTACGGTTTGAAACGTTGGATTCCTAGCATTCGGTGCAACGGGAGTTCCATACCAGCAGTTAAGGACCGGGTTGCCCCGTCCCACTACGAGCAGCCGTTAGAAAACAGTTCTACCGGAGGCTATCCCGCACCACGGGTTTTCTTAGTGAAAGGGACTGCGCAGCCATCGAAGAGTAGGGGGAGTCAGAGAGAGGCAGGCTTGTTGGGCTGATACATCTAGTTTACTAAATAGCCTTAATGGCGTCCCCCTCTTCGTTGATGCGCGTGGCCTGTGAAATTAGGCAGGGCCCAATGAGCAAGGCTGATTACTATCTAATTGCAGAGCGCAATGCTCTCATATATTATTATCCATGAATCTCATTTCACTAATCAGAAACGTG", "CACCTCGTCAATACAACAAAAGGCGGCTCGCTTAAAGGGCGCAGCTAGTTCCTCCCCCTCTCATTGGGACATAGTCAACCTGCTAATCCGGATTCGAATGGATTATTCCGTAATTGAACGGTAATTTAGTGAGCTTCGCAGTAAACGATAGATGCGAGCTCTAGCAGGCCACTGACTATATAAACGCCAACACTAGTGCCGTGCATGGACGACTCGATGTACTATAGATTTGCACAGGTATGACCGGAGGAGCGGGACTGCCTAGGCTATAGGGAACGGGGAGTATTGGGAGCCTTTTAGGCCCTCGTCATATCCCTTAACGTTCCCGCGCAGCTAAATTGTGGAACCGGAAAACAATGGATCTGCTTATTTTTGTAGGCTTGGTTAAGCGAAACGGATCAAAATAAACAAAGAATTAATCAATGAACTAACCAACGAAGTAAGCAAGGATATACATAGATTTATTCATTGATCTATCCATCGATGTATGCATGGACACAGACTTACTCACTGACCTACCCACCGACGTACGCACGGAGAGTTAGTCAGTGAGCTAGCCAGCGAGGTAGGCAGGGTTTTCTTTGTTCCTTCGTTGCTTGGTCTCTGTCCCTCCGTCGCTCGGTGTGCCTGCGTGGCTGGGCCCCGCCGGCGCGGGGAAA"))

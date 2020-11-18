@@ -34,36 +34,6 @@ def modified_suffix_trie_construction(text, sep_i=None):
     return trie
 
 
-def dfs_shrinkage(trie, parent, node, edges, visited, pos, count):
-    if node not in visited:
-        visited.append(node)
-        if len(edges) == 1:
-            b = edges[0][0]
-            trie.edges[parent] = [x for x in trie.edges[parent] if x[0] != node]
-            count += 1
-            if b in trie.edges:
-                dfs_shrinkage(trie, parent, b, trie.edges[b], visited, pos, count)
-                del trie.edges[node]
-                trie.nodes.remove(node)
-            else:
-                trie.edges[node] = [x for x in trie.edges[node] if x[0] != b]
-                trie.edges[parent].append([b, pos, count])
-
-        else:
-            if count > 1:
-                trie.nodes.append(node)
-                trie.edges[node] = edges
-                trie.edges[parent].append([node, pos, count])
-                count = 1
-            for b, s, p in trie.edges[node]:
-                if b in trie.edges:
-                    dfs_shrinkage(trie, node, b, trie.edges[b], visited, p, count)
-
-            for i, x in enumerate(trie.edges[node]):
-                if not str(x[1]).isnumeric():
-                    trie.edges[node][i] = [x[0], x[2], 1]
-
-
 def modified_suffix_tree_construction(text, sep_i=None):
     trie = modified_suffix_trie_construction(text, sep_i)
     paths = maximal_non_branching_paths(trie.edges)
