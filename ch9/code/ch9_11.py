@@ -30,7 +30,7 @@ def burrows_wheeler_matching_count(last_column, first_occurrence, pattern, count
         if pattern:
             symbol = pattern[-1]
             pattern = pattern[:-1]
-            if symbol in [x[0] for x in last_column[top:bottom + 1]]:
+            if count[symbol][bottom + 1] > count[symbol][top]:
                 top = first_occurrence[symbol] + count[symbol][top]
                 bottom = first_occurrence[symbol] + count[symbol][bottom + 1] - 1
             else:
