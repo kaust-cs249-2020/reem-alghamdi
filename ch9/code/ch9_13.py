@@ -6,7 +6,6 @@ import numpy as np
 
 from ch9.code.ch9_06 import suffix_array
 from ch9.code.ch9_07 import burrows_wheeler_transform_construction
-from ch9.code.ch9_17 import partial_suffix_array
 
 
 def data_checkpoints(bw_text, C):
