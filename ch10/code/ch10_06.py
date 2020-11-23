@@ -6,12 +6,7 @@ import numpy as np
 from ch10.code.ch10_05 import format_to_df
 
 
-def viterbi_decoding_problem(x, alphabet, states, emission, transition):
-    """
-    * make DAG with start and sink nodes and  |States| rows and n columns (n is the length of emitted x)
-    * S + backtrack
-    * return longest path
-    """
+def viterbi_decoding(x, alphabet, states, emission, transition):
     backtrack = np.ones((len(states), (len(x))), dtype=int)
     s = np.zeros((len(states), len(x)))
     for k in range(0, s.shape[0]):
@@ -44,4 +39,4 @@ if __name__ == "__main__":
 
     with open("../data/hmm1") as tr:
         with open("../data/hmm2") as em:
-            print(viterbi_decoding_problem("xzxyxyxxzxzxzzyyxyxxxyyyxxzyyxxxyzxyyxyyxxxzyxzxxzxyzyxzyyyxxzyyxxxxyzzyyyzyxzzzxxxxzzxxyzxzzyyyxzxy", "x y z".split(), "A B C D".split(), format_to_df(em), format_to_df(tr)))
+            print(viterbi_decoding("xzxyxyxxzxzxzzyyxyxxxyyyxxzyyxxxyzxyyxyyxxxzyxzxxzxyzyxzyyyxxzyyxxxxyzzyyyzyxzzzxxxxzzxxyzxzzyyyxzxy", "x y z".split(), "A B C D".split(), format_to_df(em), format_to_df(tr)))
