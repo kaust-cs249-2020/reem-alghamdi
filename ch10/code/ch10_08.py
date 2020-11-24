@@ -6,7 +6,6 @@ import pandas as pd
 import numpy as np
 
 pd.set_option("display.max_rows", None, "display.max_columns", None)
-pd.options.display.float_format = '{:,.3f}'.format
 
 
 def profile_hmm(threshold, alphabet, alignments):
@@ -76,7 +75,7 @@ def profile_hmm(threshold, alphabet, alignments):
                 edges["S"] += 1
                 transition.loc["S", paths[i][j - 1][0]] += 1
             if j == len(paths[i]) - 1:
-                if paths[i][j] in edges:
+                if paths[i][j][0] in edges:
                     edges[paths[i][j][0]] += 1
                 else:
                     edges[paths[i][j][0]] = 1
@@ -95,8 +94,8 @@ def profile_hmm(threshold, alphabet, alignments):
     for edge, l in edges.items():
         transition.loc[edge] = transition.loc[edge] / l
 
-    print(transition)
-    transition.to_csv("../data/10_08_t.csv", sep=" ", float_format='%.3f')
+    print(transition.applymap('{:,g}'.format))
+    transition.to_csv("../data/10_08_t.csv", sep="\t", float_format='%.3f')
 
     print("--------")
     # emission matrix
@@ -113,9 +112,9 @@ def profile_hmm(threshold, alphabet, alignments):
 
     for pair, l in pairs.items():
         emission.loc[pair] = emission.loc[pair] / l
-    print(emission)
+    print(emission.applymap('{:,g}'.format))
 
-    emission.to_csv("../data/10_08_e.csv", sep=" ", float_format='%.3f')
+    emission.to_csv("../data/10_08_e.csv", sep="\t", float_format='%.3f')
 
     profile.columns = list(range(1, len(profile.columns) + 1))
     alignment_prime.columns = profile.columns
@@ -131,12 +130,17 @@ if __name__ == "__main__":
 # E-D
 # E-D"""
 #     profile_hmm(0.289, "A B C D E".split(), al.split())
-    al = """BDE----BA
---ED-C-B-
-BDED-CA-D
-B-ED-CABD
-AC-DC-AB-"""
-    profile_hmm(0.246, "A	B	C	D	E".split(), al.split())
+    al = """CACCC-BBD
+CCECDDB-A
+CA-CD-DBA
+-AECEDBBA
+CBECDDB-A
+CAECDDBBB
+-A-CDDBBC
+C-DCDDEBC
+C-ECDDABA
+C-EC--BBA"""
+    profile_hmm(0.304, "A	B	C	D	E".split(), al.split())
 
 #     al = """ACDEFACADF
 #     AFDA---CCF
