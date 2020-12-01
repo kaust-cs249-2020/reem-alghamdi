@@ -95,6 +95,7 @@ def profile_hmm_pseudocount(threshold, pseudocount, alphabet, alignments):
     for edge, l in edges.items():
         transition.loc[edge] = transition.loc[edge] / l
 
+    transition_square_pair = {}
     # PSEUDO-COUNT PART!!!!!!!!!!
     for i in range(0, k + 1):
         if i == 0:
@@ -109,6 +110,8 @@ def profile_hmm_pseudocount(threshold, pseudocount, alphabet, alignments):
         for row in rows:
             c = []
             for col in cols:
+                transition_square_pair[col] = transition_square_pair.get(col, [])
+                transition_square_pair[col].append(row)
                 if transition.loc[row, col] == 0:
                     transition.loc[row, col] = pseudocount
                 else:
@@ -117,10 +120,10 @@ def profile_hmm_pseudocount(threshold, pseudocount, alphabet, alignments):
             if not c:
                 transition.loc[row] /= transition.loc[row].sum()
 
-    print(transition.applymap('{:,g}'.format))
-    transition.to_csv("../data/10_09_t.csv", sep="\t", float_format='%.3f')
+    # print(transition.applymap('{:,g}'.format))
+    # transition.to_csv("../data/10_09_t.csv", sep="\t", float_format='%.3f')
 
-    print("--------")
+    # print("--------")
 
     # emission matrix
     emission = pd.DataFrame(data=np.zeros((len(states), len(alphabet)), dtype=float), columns=alphabet, index=states)
@@ -138,6 +141,7 @@ def profile_hmm_pseudocount(threshold, pseudocount, alphabet, alignments):
         emission.loc[pair] = emission.loc[pair] / l
 
     # PSEUDO-COUNT PART!!!!!!!!!!
+    emission_square_pair = {}
     for i in range(0, k + 1):
         if i == 0:
             rows = [f"I0"]
@@ -146,6 +150,8 @@ def profile_hmm_pseudocount(threshold, pseudocount, alphabet, alignments):
         for row in rows:
             c = []
             for col in alphabet:
+                emission_square_pair[col] = emission_square_pair.get(col, [])
+                emission_square_pair[col].append(row)
                 if emission.loc[row, col] == 0:
                     emission.loc[row, col] = pseudocount
                 else:
@@ -154,12 +160,13 @@ def profile_hmm_pseudocount(threshold, pseudocount, alphabet, alignments):
             if not c:
                 emission.loc[row] /= emission.loc[row].sum()
 
-    print(emission.applymap('{:,g}'.format))
+    # print(emission.applymap('{:,g}'.format))
 
-    emission.to_csv("../data/10_09_e.csv", sep="\t", float_format='%.3f')
+    # emission.to_csv("../data/10_09_e.csv", sep="\t", float_format='%.3f')
 
     profile.columns = list(range(1, len(profile.columns) + 1))
     alignment_prime.columns = profile.columns
+    return states, paths, transition, transition_square_pair, emission, emission_square_pair
 
 
 if __name__ == "__main__":

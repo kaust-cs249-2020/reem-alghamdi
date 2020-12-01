@@ -130,17 +130,17 @@ if __name__ == "__main__":
 # E-D
 # E-D"""
 #     profile_hmm(0.289, "A B C D E".split(), al.split())
-    al = """CACCC-BBD
-CCECDDB-A
-CA-CD-DBA
--AECEDBBA
-CBECDDB-A
-CAECDDBBB
--A-CDDBBC
-C-DCDDEBC
-C-ECDDABA
-C-EC--BBA"""
-    profile_hmm(0.304, "A	B	C	D	E".split(), al.split())
+    al = """DEDAC-A-D
+DEE-C-ABE
+D-E--BAAD
+DEE-CBAAD
+D-E--B-AD
+DEE-B--AD
+B-EAC-AE-
+D-DACEACD
+-DBCCB-A-
+-EDACBBA-"""
+    profile_hmm(0.37, "A	B	C	D	E".split(), al.split())
 
 #     al = """ACDEFACADF
 #     AFDA---CCF
