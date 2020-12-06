@@ -2,9 +2,8 @@
 @BY: Reem Alghamdi
 @DATE: 06-12-2020
 """
-from ch9.code.ch9_05 import colored_shared_depth_first
-from ch9.code.ch9_15 import modified_suffix_tree_construction
-from ch9.code.ch9_16 import tree_coloring
+from ch9.code.ch9_05 import longest_shared_substring
+
 
 """
 3. Give an example of a string P = P 1 ...P n over alphabet Σ = {A, B} whose
@@ -25,11 +24,7 @@ I would use the same approach as longest shared substring, I would use text1 = s
 
 
 def longest_palindromic_substring(text):
-    combo = text + "#" + text[::-1] + "$"
-    colored_tree = modified_suffix_tree_construction(combo, len(text) + 1)
-    tree_coloring(colored_tree)
-    return colored_shared_depth_first(colored_tree, combo, colored_tree.root, 0, 0, [], "", [])[0]
-
+    return longest_shared_substring(text, text[::-1])
 
 """
 5. There is a casino that sometimes uses a fair die and sometimes uses a
