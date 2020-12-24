@@ -22,7 +22,7 @@ def viterbi_decoding(x, alphabet, states, emission, transition):
     sink = s[sink_pos, -1]
     # print(sink, sink_pos)
     #
-    # print(s)
+    print(s)
     pointer = len(x) - 1
     path = ""
     val = sink_pos
